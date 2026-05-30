@@ -9,3 +9,7 @@ coverage/
 # generated HTML reports
 wfviz-*.html
 *.wfviz.html
+
+# capture temp
+.frames/
+assets/.frames/

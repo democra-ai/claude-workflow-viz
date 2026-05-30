@@ -1,11 +1,57 @@
-# claude-workflow-viz
+<p align="center">
+  <img src="./assets/hero.png" alt="claude-workflow-viz — visualize Claude Code dynamic workflows" width="100%" />
+</p>
 
-> Visualize **Claude Code dynamic workflows** from your terminal — live progress, a DAG, a gantt timeline, and a self-contained interactive HTML report.
+<h1 align="center">claude-workflow-viz</h1>
 
-[![CI](https://github.com/democra-ai/claude-workflow-viz/actions/workflows/ci.yml/badge.svg)](https://github.com/democra-ai/claude-workflow-viz/actions/workflows/ci.yml)
-[![node](https://img.shields.io/badge/node-%E2%89%A518-43853d)](https://nodejs.org)
-[![license](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
-[![deps](https://img.shields.io/badge/runtime%20deps-0-success)](./package.json)
+<p align="center">
+  <strong>See your Claude Code dynamic workflows.</strong> A live dashboard that auto-opens when a workflow starts,<br/>
+  plus a terminal view and a self-contained interactive HTML report — DAG · gantt · live concurrency.
+</p>
+
+<p align="center">
+  <a href="https://github.com/democra-ai/claude-workflow-viz/actions/workflows/ci.yml"><img src="https://github.com/democra-ai/claude-workflow-viz/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%E2%89%A518-43853d" alt="node ≥18" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT" /></a>
+  <a href="./package.json"><img src="https://img.shields.io/badge/runtime%20deps-0-success" alt="zero runtime deps" /></a>
+  <a href="https://democra-ai.github.io/claude-workflow-viz/"><img src="https://img.shields.io/badge/live-demo-2dd4bf" alt="live demo" /></a>
+</p>
+
+<p align="center">
+  <a href="https://democra-ai.github.io/claude-workflow-viz/"><b>▶ Live demo</b></a> ·
+  <a href="#auto-launch-as-a-claude-code-plugin"><b>Plugin</b></a> ·
+  <a href="#commands"><b>Commands</b></a> ·
+  <a href="#how-it-works"><b>How it works</b></a>
+</p>
+
+---
+
+### The replay — watch a finished run play back from `0:00` to done
+
+<p align="center">
+  <img src="./assets/replay.gif" alt="Replaying a workflow run: 5 search agents fan out in parallel, a barrier holds, then synthesize runs" width="90%" />
+</p>
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+**Interactive HTML report** &nbsp;·&nbsp; `wfviz export`
+
+<img src="./assets/report.png" alt="Interactive HTML report: telemetry, gantt with concurrency curve and barrier, fan-out → barrier → reduce flow, per-agent drill-down" width="100%" />
+
+</td>
+<td width="50%" valign="top">
+
+**Live dashboard** &nbsp;·&nbsp; auto-opens via the plugin
+
+<img src="./assets/live.png" alt="Live dashboard following a 3-phase run with two barriers, agents lighting up as they finish" width="100%" />
+
+</td>
+</tr>
+</table>
+
+---
 
 Claude Code's [dynamic workflows](https://code.claude.com/docs/en/workflows) fan a single task out across dozens — sometimes hundreds — of subagents. The built-in `/workflows` view is great while you're in the session, but once a run finishes the rich structure (which agents ran in parallel, where the `parallel()` barriers were, how long each took, how many tokens they burned) is locked away in JSON on disk.
 
