@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+*.tgz
+coverage/
+.idea/
+.vscode/
+# generated HTML reports
+wfviz-*.html
+*.wfviz.html

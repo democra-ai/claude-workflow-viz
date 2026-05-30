@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content="claude-workflow-viz" />
+<title>research-claude-dynamic-workflows · claude-workflow-viz</title>
+<style>
+:root{
+  --bg:#0a0e13; --panel:#0f151c; --panel2:#131b24; --line:#1f2a36;
+  --ink:#cdd6e0; --mut:#7c8895; --dim:#525e6b;
+  --teal:#2dd4bf; --teal-dim:#155e57; --amber:#f5b454; --red:#f87171; --green:#34d399;
+  --p1:#5aa9ff; --p2:#f5b454; --p3:#34d399; --p4:#c084fc; --p5:#22d3ee; --p6:#fb7185;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;line-height:1.45}
+a{color:var(--teal);text-decoration:none}
+#app{max-width:1180px;margin:0 auto;padding:28px 22px 8px}
+.credit{max-width:1180px;margin:0 auto;padding:14px 22px 40px;color:var(--dim);font-size:12px;font-family:var(--mono)}
+
+.head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 14px;margin-bottom:6px}
+.head h1{font-size:22px;font-weight:700;margin:0;letter-spacing:.2px}
+.pill{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);
+  display:inline-flex;align-items:center;gap:6px;color:var(--mut)}
+.pill .dot{width:7px;height:7px;border-radius:50%}
+.pill.ok{color:var(--green)} .pill.ok .dot{background:var(--green)}
+.pill.run{color:var(--teal)} .pill.run .dot{background:var(--teal);animation:pulse 1.4s infinite}
+.pill.err{color:var(--red)} .pill.err .dot{background:var(--red)}
+.sub{color:var(--mut);font-family:var(--mono);font-size:12px;margin:2px 0 18px}
+.sub span{color:var(--dim)}
+
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:18px}
+.chip{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 13px;min-width:96px}
+.chip b{display:block;font-size:18px;font-family:var(--mono);font-weight:700}
+.chip span{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.6px}
+.chip.warn b{color:var(--amber)} .chip.bad b{color:var(--red)}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+.panel h2{font-size:12px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin:0 0 14px}
+
+.transport{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.tbtn{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:9px;
+  width:38px;height:32px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.tbtn:hover{border-color:var(--teal);color:var(--teal)}
+.tbtn.primary{background:var(--teal);color:#04231f;border-color:var(--teal);font-weight:700}
+.clock{font-family:var(--mono);font-size:13px;color:var(--teal);min-width:92px}
+.scrub{flex:1;min-width:160px;accent-color:var(--teal)}
+.speeds{display:flex;gap:4px}
+.speeds button{background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:7px;
+  font-family:var(--mono);font-size:11px;padding:4px 8px;cursor:pointer}
+.speeds button.on{border-color:var(--teal);color:var(--teal)}
+.liveconc{font-family:var(--mono);font-size:12px;color:var(--mut)}
+.liveconc b{color:var(--ink)}
+
+svg{display:block;width:100%;height:auto;overflow:visible}
+.bar{cursor:pointer;transition:opacity .12s}
+.bar:hover{opacity:.85}
+.bar.dim{opacity:.32}
+.axis text,.lane text{font-family:var(--mono);font-size:11px;fill:var(--mut)}
+.gridline{stroke:var(--line);stroke-width:1}
+.barrier-line{stroke:var(--amber);stroke-width:1.4;stroke-dasharray:4 4;opacity:.7}
+.barrier-txt{fill:var(--amber);font-family:var(--mono);font-size:10px}
+.playhead{stroke:var(--teal);stroke-width:1.4}
+.concarea{fill:var(--teal);opacity:.12}
+.conctop{stroke:var(--teal);stroke-width:1.2;fill:none;opacity:.5}
+
+.flow{display:flex;flex-direction:column;gap:0}
+.band{border-left:2px solid var(--line);padding:10px 0 10px 16px;position:relative}
+.band .bt{font-family:var(--mono);font-size:12px;color:var(--mut);margin-bottom:9px}
+.band .bt b{color:var(--ink)}
+.nodes{display:flex;flex-wrap:wrap;gap:8px}
+.node{border:1px solid var(--line);background:var(--panel2);border-radius:9px;padding:8px 10px;
+  font-family:var(--mono);font-size:11px;cursor:pointer;min-width:120px;transition:border-color .15s,box-shadow .15s,opacity .15s}
+.node:hover{border-color:var(--teal)}
+.node.active{box-shadow:0 0 0 1px var(--teal),0 0 16px -4px var(--teal)}
+.node .nl{color:var(--ink);font-weight:600;display:block;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.node .nm{color:var(--mut);font-size:10px;display:flex;gap:8px;flex-wrap:wrap}
+.node[data-state=running]{border-color:var(--teal)}
+.node[data-state=error]{border-color:var(--red)}
+.barrier-row{display:flex;align-items:center;gap:8px;color:var(--amber);font-family:var(--mono);
+  font-size:11px;padding:8px 0 8px 16px;border-left:2px solid var(--amber)}
+.ingress,.egress{font-family:var(--mono);font-size:11px;color:var(--mut);padding:8px 0 8px 16px;border-left:2px solid var(--teal-dim)}
+.ingress b,.egress b{color:var(--teal)}
+
+.logs{font-family:var(--mono);font-size:12px;color:var(--mut);display:flex;flex-direction:column;gap:6px}
+.logs .lg::before{content:"▸ ";color:var(--teal)}
+
+.detail{font-family:var(--mono);font-size:12px;color:var(--mut);min-height:54px}
+.detail.empty{color:var(--dim)}
+.detail .dl{color:var(--ink);font-weight:700;font-size:13px}
+.detail .row{margin-top:4px}
+.detail .row b{color:var(--ink)}
+.detail pre{white-space:pre-wrap;word-break:break-word;background:var(--panel2);border:1px solid var(--line);
+  border-radius:8px;padding:8px 10px;margin:8px 0 0;color:var(--mut);max-height:160px;overflow:auto}
+
+.legend{display:flex;flex-wrap:wrap;gap:14px;color:var(--mut);font-family:var(--mono);font-size:11px;margin-top:4px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:5px;vertical-align:middle}
+.note{color:var(--dim);font-size:11px;font-family:var(--mono);margin-top:10px}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@media (max-width:680px){#app{padding:18px 12px}.head h1{font-size:18px}.chip{min-width:78px}}
+@media (prefers-reduced-motion:reduce){.pill.run .dot{animation:none}}
+</style>
+</head>
+<body>
+<main id="app" aria-label="Claude Code workflow visualization"></main>
+<footer class="credit">generated by <a href="https://github.com/democra-ai/claude-workflow-viz" rel="noopener noreferrer">claude-workflow-viz</a> · a visualizer for Claude Code dynamic workflows</footer>
+<script>window.__WFVIZ__ = {"run":{"runId":"wf_c7a66bf4-7c6","workflowName":"research-claude-dynamic-workflows","status":"completed","defaultModel":"opus-4-8","startTime":1780098811914,"durationMs":360818,"timestamp":"2026-05-29T23:59:32.733Z","agentCount":6,"totalTokens":308221,"totalToolCalls":85,"scriptPath":"/Users/example/.claude/projects/-Users-tao-shen-democra-ai/f0e94632-631a-4605-96ba-5e3889a6c425/workflows/scripts/research-claude-dynamic-workflows-wf_c7a66bf4-7c6.js","summary":"Research Claude Code latest Dynamic Workflows feature via parallel web search","logs":["Fanning out 5 web-research agents on distinct angles of Claude Code Dynamic Workflows…","Collected 67 sourced findings across 5/5 angles."],"resultDesc":"{ synthesis, angleSummaries, totalFindings }"},"phases":[{"index":1,"title":"Search","detail":"parallel web research from 5 distinct angles","startRel":27,"endRel":284098,"agentIndexes":[1,2,3,4,5],"barrierAfter":true},{"index":2,"title":"Synthesize","detail":"combine findings into a cited Chinese summary","startRel":284102,"endRel":360812,"agentIndexes":[6],"barrierAfter":false}],"agents":[{"index":1,"label":"search:official-docs","phaseIndex":1,"phaseTitle":"Search","state":"done","startRel":27,"endRel":284098,"durationMs":284071,"tokens":54817,"toolCalls":14,"attempt":1,"model":"opus-4-8","lastToolName":"StructuredOutput","promptPreview":"Today is 2026-05-30. Research the OFFICIAL Anthropic documentation for the Claude Code \"Workflow\" tool / \"Dynamic Workflows\" feature.\nUse We","resultPreview":"{\"angle\":\"Official Anthropic documentation for the Claude Code \\\"Workflow\\\" tool / \\\"Dynamic Workflows\\\" feature: what it is, the script API"},{"index":2,"label":"search:release-notes","phaseIndex":1,"phaseTitle":"Search","state":"done","startRel":29,"endRel":76930,"durationMs":76901,"tokens":41368,"toolCalls":12,"attempt":1,"model":"opus-4-8","lastToolName":"StructuredOutput","promptPreview":"Today is 2026-05-30. Find the RELEASE / ANNOUNCEMENT of Claude Code \"Dynamic Workflows\" — when it shipped, which version, and what the chang","resultPreview":"{\"angle\":\"Release / announcement of Claude Code \\\"Dynamic Workflows\\\" — ship date, version, and what the changelog/blog said\",\"found_anythin"},{"index":3,"label":"search:how-it-works","phaseIndex":1,"phaseTitle":"Search","state":"done","startRel":30,"endRel":187355,"durationMs":187325,"tokens":61437,"toolCalls":21,"attempt":1,"model":"opus-4-8","lastToolName":"StructuredOutput","promptPreview":"Today is 2026-05-30. Research the TECHNICAL DETAILS of how Claude Code Dynamic Workflows actually work.\nFocus on: the JavaScript script mode","resultPreview":"{\"angle\":\"Technical details of how Claude Code Dynamic Workflows actually work (JS script model, pipeline/parallel, phase/log, StructuredOut"},{"index":4,"label":"search:community-examples","phaseIndex":1,"phaseTitle":"Search","state":"done","startRel":31,"endRel":190148,"durationMs":190117,"tokens":53794,"toolCalls":24,"attempt":1,"model":"opus-4-8","lastToolName":"StructuredOutput","promptPreview":"Today is 2026-05-30. Find COMMUNITY coverage, tutorials, blog posts, and real examples of Claude Code Dynamic Workflows.\nUse WebSearch + Web","resultPreview":"{\"angle\":\"Community coverage, tutorials, blog posts, and real examples of Claude Code Dynamic Workflows\",\"found_anything\":true,\"summary\":\"Co"},{"index":5,"label":"search:comparison","phaseIndex":1,"phaseTitle":"Search","state":"done","startRel":32,"endRel":143723,"durationMs":143691,"tokens":49836,"toolCalls":14,"attempt":1,"model":"opus-4-8","lastToolName":"StructuredOutput","promptPreview":"Today is 2026-05-30. Research how Claude Code Dynamic Workflows COMPARE to and RELATE to adjacent features.\nSpecifically: vs spawning indivi","resultPreview":"{\"angle\":\"How Claude Code Dynamic Workflows compare to and relate to adjacent features (single subagents/Task tool, /loop, scheduled tasks/c"},{"index":6,"label":"synthesize","phaseIndex":2,"phaseTitle":"Synthesize","state":"done","startRel":284102,"endRel":360812,"durationMs":76710,"tokens":46969,"toolCalls":0,"attempt":1,"model":"opus-4-8","lastToolName":null,"promptPreview":"Today is 2026-05-30. You are synthesizing parallel web research into a clear, accurate answer for a Chinese-speaking developer who asked: \"帮","resultPreview":"出处: https://code.claude.com/docs/en/workflows\n\n# Claude Code Dynamic Workflows（Workflow 工具）\n\nDynamic Workflows 是 Claude Code 在 2026 年 5 月 28"}],"windowMs":360818,"peak":5,"cap":16,"retries":0,"concurrency":[0,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]};</script>
+<script>
+"use strict";
+(function(){
+var D = window.__WFVIZ__; if(!D){return;}
+var PCOL = ["var(--p1)","var(--p2)","var(--p3)","var(--p4)","var(--p5)","var(--p6)"];
+function pcol(i){ return PCOL[((i-1)%PCOL.length+PCOL.length)%PCOL.length]; }
+function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+function S(t,a){ var e=document.createElementNS("http://www.w3.org/2000/svg",t); for(var k in a){ e.setAttribute(k,a[k]); } return e; }
+function fmtClock(ms){ ms=Math.max(0,ms||0); var s=Math.round(ms/1000); var m=Math.floor(s/60); var r=s%60; return m+":"+(r<10?"0":"")+r; }
+function fmtDur(ms){ if(ms<1000)return Math.round(ms)+" ms"; var s=ms/1000; if(s<90)return s.toFixed(1)+" s"; var m=s/60; if(m<60)return m.toFixed(1)+" min"; return Math.floor(m/60)+"h "+Math.round(m%60)+"m"; }
+function fmtNum(n){ n=Math.round(n||0); var s=String(Math.abs(n)),o=""; for(var i=0;i<s.length;i++){ if(i>0&&(s.length-i)%3===0)o+=","; o+=s[i]; } return (n<0?"-":"")+o; }
+function fmtK(n){ n=n||0; if(n<1000)return String(Math.round(n)); if(n<1e6)return (n<1e4?(n/1e3).toFixed(1):Math.round(n/1e3))+"k"; return (n/1e6).toFixed(1)+"M"; }
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+
+var app=document.getElementById("app");
+var WIN=Math.max(1,D.windowMs);
+var agentByIndex={}; D.agents.forEach(function(a){ agentByIndex[a.index]=a; });
+
+// ---------- header ----------
+var head=el("div","head");
+head.appendChild(el("h1",null,D.run.workflowName));
+var st=(D.run.status||"").toLowerCase();
+var pc=st.indexOf("complet")>=0||st==="done"?"ok":(st.indexOf("err")>=0||st.indexOf("fail")>=0||st.indexOf("abort")>=0?"err":"run");
+var pill=el("span","pill "+pc); pill.appendChild(el("span","dot")); pill.appendChild(el("span",null,D.run.status)); head.appendChild(pill);
+app.appendChild(head);
+var sub=el("div","sub");
+var when=D.run.timestamp?new Date(D.run.timestamp).toLocaleString():"";
+sub.innerHTML=esc(D.run.runId)+"  <span>·</span>  "+esc(D.run.defaultModel||"")+(when?"  <span>·</span>  "+esc(when):"");
+app.appendChild(sub);
+function esc(s){ s=(s==null?"":String(s)); return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+
+// ---------- chips ----------
+var chips=el("div","chips");
+function chip(v,l,cls){ var c=el("div","chip"+(cls?" "+cls:"")); c.appendChild(el("b",null,v)); c.appendChild(el("span",null,l)); chips.appendChild(c); }
+chip(String(D.run.agentCount),"agents");
+chip(fmtNum(D.run.totalToolCalls),"tool calls");
+chip(fmtNum(D.run.totalTokens),"tokens");
+chip(fmtDur(D.run.durationMs),"duration");
+chip("×"+D.peak+" / "+D.cap,"peak concurrency");
+if(D.retries>0) chip(String(D.retries),"retries","warn");
+app.appendChild(chips);
+
+// ---------- transport ----------
+var tp=el("div","panel");
+var trow=el("div","transport");
+var bRestart=el("button","tbtn","⟲"); bRestart.title="Restart"; bRestart.setAttribute("aria-label","Restart");
+var bPlay=el("button","tbtn primary","▶"); bPlay.title="Play / pause"; bPlay.setAttribute("aria-label","Play or pause");
+var clock=el("div","clock","0:00 / "+fmtClock(WIN));
+var scrub=document.createElement("input"); scrub.type="range"; scrub.min="0"; scrub.max=String(WIN); scrub.value="0"; scrub.step=String(Math.max(1,Math.round(WIN/600))); scrub.className="scrub"; scrub.setAttribute("aria-label","Replay position"); scrub.setAttribute("aria-valuetext","0:00");
+var speeds=el("div","speeds"); var SP=[1,2,4,8]; var speed=4; var spbtns=[];
+SP.forEach(function(s){ var b=el("button",s===speed?"on":null,s+"×"); b.onclick=function(){ speed=s; spbtns.forEach(function(x,i){ x.className=SP[i]===speed?"on":""; }); }; spbtns.push(b); speeds.appendChild(b); });
+var live=el("div","liveconc"); live.innerHTML="in flight <b>0</b>";
+trow.appendChild(bRestart); trow.appendChild(bPlay); trow.appendChild(clock); trow.appendChild(scrub); trow.appendChild(speeds); trow.appendChild(live);
+tp.appendChild(trow); app.appendChild(tp);
+
+// ---------- gantt ----------
+var gp=el("div","panel"); gp.appendChild(el("h2",null,"Timeline · gantt"));
+var gwrap=el("div"); gp.appendChild(gwrap); app.appendChild(gp);
+var ROWH=26, PADL=8, PADR=14, PADT=10, AXISH=22, CONCH=46;
+var rows=D.agents.slice().sort(function(a,b){ return a.startRel-b.startRel || a.index-b.index; });
+var W=1000; var GH=rows.length*ROWH; var H=PADT+CONCH+GH+AXISH;
+var svg=S("svg",{viewBox:"0 0 "+W+" "+H,preserveAspectRatio:"xMidYMid meet",role:"img","aria-label":"Gantt timeline: "+D.agents.length+" agents across "+D.phases.length+" phases, peak concurrency "+D.peak+" of "+D.cap});
+var plotL=170, plotR=W-PADR, plotW=plotR-plotL;
+function xOf(ms){ return plotL+ (clamp(ms,0,WIN)/WIN)*plotW; }
+// gridlines + axis ticks
+var ticks=6;
+for(var i=0;i<=ticks;i++){ var tx=plotL+(i/ticks)*plotW; var tms=(i/ticks)*WIN;
+  svg.appendChild(S("line",{class:"gridline",x1:tx,y1:PADT,x2:tx,y2:PADT+CONCH+GH}));
+  var tl=S("text",{class:"axis",x:tx,y:H-6,"text-anchor":i===0?"start":(i===ticks?"end":"middle")}); tl.textContent=fmtClock(tms); svg.appendChild(tl);
+}
+// concurrency area
+var cTop=PADT, cBot=PADT+CONCH;
+var maxC=Math.max(D.peak,1);
+var pts=[]; D.concurrency.forEach(function(v,idx){ var x=plotL+(idx/(D.concurrency.length-1))*plotW; var y=cBot-(v/maxC)*(CONCH-8); pts.push([x,y]); });
+var areaD="M "+plotL+" "+cBot; pts.forEach(function(p){ areaD+=" L "+p[0].toFixed(1)+" "+p[1].toFixed(1); }); areaD+=" L "+plotR+" "+cBot+" Z";
+svg.appendChild(S("path",{class:"concarea",d:areaD}));
+svg.appendChild(S("path",{class:"conctop",d:"M "+pts.map(function(p){return p[0].toFixed(1)+" "+p[1].toFixed(1);}).join(" L ")}));
+var clbl=S("text",{class:"axis",x:plotL,y:cTop+10}); clbl.textContent="concurrency · peak ×"+D.peak; svg.appendChild(clbl);
+// barrier lines (at phase end where barrierAfter)
+D.phases.forEach(function(p){ if(p.barrierAfter){ var bx=xOf(p.endRel);
+  svg.appendChild(S("line",{class:"barrier-line",x1:bx,y1:cBot,x2:bx,y2:cBot+GH}));
+  var bt=S("text",{class:"barrier-txt",x:bx+3,y:cBot+12}); bt.textContent="barrier"; svg.appendChild(bt);
+}});
+// agent rows
+var barEls=[];
+rows.forEach(function(a,r){ var y=cBot+r*ROWH+4; var h=ROWH-9;
+  var lbl=S("text",{class:"lane",x:PADL,y:y+h-2}); lbl.textContent=a.label.length>24?a.label.slice(0,23)+"…":a.label; svg.appendChild(lbl);
+  var x1=xOf(a.startRel); var x2=Math.max(x1+3,xOf(a.state==="running"?WIN:a.endRel));
+  var rect=S("rect",{class:"bar",x:x1,y:y,width:(x2-x1),height:h,rx:3,fill:pcol(a.phaseIndex)});
+  rect.setAttribute("data-index",a.index);
+  if(a.state==="error") rect.setAttribute("stroke","var(--red)");
+  rect.addEventListener("click",function(){ select(a.index); });
+  svg.appendChild(rect); barEls.push({a:a,rect:rect});
+});
+// playhead
+var ph=S("line",{class:"playhead",x1:plotL,y1:PADT,x2:plotL,y2:cBot+GH}); svg.appendChild(ph);
+gwrap.appendChild(svg);
+
+// ---------- flow (fan-out -> barrier -> reduce) ----------
+var fp=el("div","panel"); fp.appendChild(el("h2",null,"Flow · fan-out → barrier → reduce"));
+var flow=el("div","flow");
+var ing=el("div","ingress"); ing.innerHTML="prompt → <b>script.js</b> <span style='color:var(--dim)'>(orchestration Claude wrote; intermediate results stay in script vars, not the model's context)</span>"; flow.appendChild(ing);
+var nodeEls={};
+D.phases.slice().sort(function(a,b){return a.index-b.index;}).forEach(function(p){
+  var band=el("div","band"); band.style.borderLeftColor=pcol(p.index);
+  var bt=el("div","bt"); bt.innerHTML="Phase "+p.index+" · <b>"+esc(p.title)+"</b>"+(p.detail?" <span style='color:var(--dim)'>— "+esc(p.detail)+"</span>":""); band.appendChild(bt);
+  var nodes=el("div","nodes");
+  D.agents.filter(function(a){return a.phaseIndex===p.index;}).forEach(function(a){
+    var n=el("div","node"); n.setAttribute("data-state",a.state); n.style.borderLeftColor=pcol(p.index);
+    var nl=el("span","nl",a.label); var nm=el("div","nm");
+    nm.appendChild(el("span",null,fmtDur(a.durationMs)));
+    if(a.tokens) nm.appendChild(el("span",null,fmtK(a.tokens)+" tok"));
+    if(a.toolCalls) nm.appendChild(el("span",null,a.toolCalls+" tools"));
+    if(a.attempt>1) nm.appendChild(el("span",null,"×"+a.attempt));
+    n.appendChild(nl); n.appendChild(nm);
+    n.setAttribute("tabindex","0"); n.setAttribute("role","button"); n.setAttribute("aria-label","agent "+a.label);
+    n.addEventListener("click",function(){ select(a.index); });
+    n.addEventListener("keydown",function(ev){ if(ev.key==="Enter"||ev.key===" "){ ev.preventDefault(); select(a.index); } });
+    nodes.appendChild(n); nodeEls[a.index]=n;
+  });
+  band.appendChild(nodes); flow.appendChild(band);
+  if(p.barrierAfter){ var br=el("div","barrier-row"); br.textContent="║ barrier — parallel() waits for ALL "+D.agents.filter(function(a){return a.phaseIndex===p.index;}).length+" before the next phase"; flow.appendChild(br); }
+});
+var eg=el("div","egress"); eg.innerHTML="<b>return</b> "+esc(D.run.resultDesc||"(value)")+" <span style='color:var(--dim)'>→ back to the conversation</span>"; flow.appendChild(eg);
+fp.appendChild(flow); app.appendChild(fp);
+
+// ---------- detail ----------
+var dp=el("div","panel"); dp.appendChild(el("h2",null,"Agent detail"));
+var detail=el("div","detail empty","Click any bar or node to inspect an agent."); dp.appendChild(detail); app.appendChild(dp);
+function select(idx){ var a=agentByIndex[idx]; if(!a)return;
+  Object.keys(nodeEls).forEach(function(k){ nodeEls[k].classList.toggle("active",String(k)===String(idx)); });
+  barEls.forEach(function(b){ b.rect.classList.toggle("dim", b.a.index!==idx); });
+  detail.className="detail";
+  var html="<div class='dl'>"+esc(a.label)+"</div>";
+  html+="<div class='row'>phase <b>"+a.phaseIndex+" · "+esc(a.phaseTitle)+"</b> · state <b>"+esc(a.state)+"</b> · "+esc(a.model||"")+"</div>";
+  html+="<div class='row'>start <b>"+fmtClock(a.startRel)+"</b> · end <b>"+fmtClock(a.endRel)+"</b> · "+fmtDur(a.durationMs)+" · <b>"+fmtNum(a.tokens)+"</b> tok · <b>"+a.toolCalls+"</b> tools"+(a.attempt>1?" · attempts <b>"+a.attempt+"</b>":"")+(a.lastToolName?" · last tool "+esc(a.lastToolName):"")+"</div>";
+  if(a.promptPreview) html+="<pre>"+esc(a.promptPreview)+"</pre>";
+  if(a.resultPreview) html+="<pre>"+esc(a.resultPreview)+"</pre>";
+  detail.innerHTML=html;
+}
+
+// ---------- logs ----------
+if(D.run.logs && D.run.logs.length){ var lp=el("div","panel"); lp.appendChild(el("h2",null,"log() output"));
+  var lc=el("div","logs"); D.run.logs.forEach(function(l){ lc.appendChild(el("div","lg",l)); }); lp.appendChild(lc); app.appendChild(lp);
+}
+
+// ---------- legend ----------
+var lg=el("div","panel"); lg.appendChild(el("h2",null,"Phases"));
+var leg=el("div","legend");
+D.phases.slice().sort(function(a,b){return a.index-b.index;}).forEach(function(p){ var s=el("span"); var sw=el("i"); sw.style.background=pcol(p.index); s.appendChild(sw); s.appendChild(document.createTextNode(p.title)); leg.appendChild(s); });
+lg.appendChild(leg);
+lg.appendChild(el("div","note","Bars are positioned by each agent's real start/end times. A barrier marks where a phase had fully finished before the next began — the signature of parallel()/pipeline() joining results."));
+app.appendChild(lg);
+
+// ---------- replay engine ----------
+var t=0, playing=false, raf=0, last=0;
+var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+function setT(v){ t=clamp(v,0,WIN); scrub.value=String(Math.round(t));
+  var x=xOf(t); ph.setAttribute("x1",x); ph.setAttribute("x2",x);
+  clock.textContent=fmtClock(t)+" / "+fmtClock(WIN);
+  scrub.setAttribute("aria-valuetext",fmtClock(t));
+  var inflight=0;
+  D.agents.forEach(function(a){ var on=a.startRel<=t && t<Math.max(a.endRel,a.startRel+1); if(a.state==="running") on=a.startRel<=t; if(on)inflight++;
+    var n=nodeEls[a.index]; if(n) n.classList.toggle("active",on);
+  });
+  barEls.forEach(function(b){ var a=b.a; var done=t>=a.endRel; var started=t>=a.startRel; b.rect.style.opacity = started?(done?1:0.9):0.28; });
+  live.innerHTML="in flight <b>"+inflight+"</b>";
+}
+function tick(ts){ if(!playing)return; if(!last)last=ts; var dt=ts-last; last=ts; setT(t+dt*speed); if(t>=WIN){ playing=false; bPlay.textContent="▶"; } else { raf=requestAnimationFrame(tick); } }
+function play(){ if(t>=WIN)t=0; playing=true; bPlay.textContent="❚❚"; last=0; raf=requestAnimationFrame(tick); }
+function pause(){ playing=false; bPlay.textContent="▶"; cancelAnimationFrame(raf); }
+bPlay.onclick=function(){ playing?pause():play(); };
+bRestart.onclick=function(){ pause(); setT(0); };
+scrub.oninput=function(){ pause(); setT(Number(scrub.value)); };
+setT(0);
+if(!reduce){ /* leave paused by default; user presses play */ }
+})();
+</script>
+</body>
+</html>

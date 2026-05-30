@@ -1,0 +1,42 @@
+{
+  "runId": "wf_running01",
+  "workflowName": "map-reduce-demo",
+  "status": "running",
+  "defaultModel": "claude-sonnet-4-6",
+  "timestamp": "2026-05-30T00:00:00.000Z",
+  "startTime": 1780000000000,
+  "summary": "Mapping 3 inputs in parallel, then reducing.",
+  "scriptPath": "/Users/example/.claude/projects/-Users-example-demo/sess/workflows/map-reduce-demo-wf_running01.js",
+  "logs": ["Mapping 3 inputs in parallel…"],
+  "phases": [
+    { "title": "Map", "detail": "fan out over inputs" },
+    { "title": "Reduce", "detail": "combine into one summary" }
+  ],
+  "workflowProgress": [
+    { "type": "workflow_phase", "index": 1, "title": "Map" },
+    { "type": "workflow_phase", "index": 2, "title": "Reduce" },
+    {
+      "type": "workflow_agent", "index": 1, "label": "map:input-a", "phaseIndex": 1, "phaseTitle": "Map",
+      "agentId": "a1", "model": "claude-sonnet-4-6", "state": "done",
+      "queuedAt": 1780000000010, "startedAt": 1780000000100, "durationMs": 5000,
+      "attempt": 1, "tokens": 12000, "toolCalls": 8, "lastToolName": "Read",
+      "resultPreview": "{\"ok\":true}"
+    },
+    {
+      "type": "workflow_agent", "index": 2, "label": "map:input-b", "phaseIndex": 1, "phaseTitle": "Map",
+      "agentId": "a2", "model": "claude-sonnet-4-6", "state": "running",
+      "queuedAt": 1780000000010, "startedAt": 1780000000200, "lastProgressAt": 1780000009000,
+      "attempt": 2, "tokens": 4000, "toolCalls": 3, "lastToolName": "Grep"
+    },
+    {
+      "type": "workflow_agent", "index": 3, "label": "map:input-c", "phaseIndex": 1, "phaseTitle": "Map",
+      "agentId": "a3", "model": "claude-sonnet-4-6", "state": "queued",
+      "queuedAt": 1780000000010, "attempt": 1, "tokens": 0, "toolCalls": 0
+    },
+    {
+      "type": "workflow_agent", "index": 4, "label": "reduce", "phaseIndex": 2, "phaseTitle": "Reduce",
+      "agentId": "a4", "model": "claude-sonnet-4-6", "state": "pending",
+      "queuedAt": 1780000000020, "attempt": 1, "tokens": 0, "toolCalls": 0
+    }
+  ]
+}

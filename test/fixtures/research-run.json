@@ -1,0 +1,198 @@
+{
+  "runId": "wf_c7a66bf4-7c6",
+  "timestamp": "2026-05-29T23:59:32.733Z",
+  "taskId": "ww22q8os9",
+  "script": "export const meta = {\n  name: 'research-claude-dynamic-workflows',\n  description: 'Research Claude Code latest Dynamic Workflows feature via parallel web search',\n  phases: [\n    { title: 'Search', detail: 'parallel web research from 5 distinct angles' },\n    { title: 'Synthesize', detail: 'combine \n/* …trimmed for fixture… */",
+  "scriptPath": "/Users/example/.claude/projects/-Users-tao-shen-democra-ai/f0e94632-631a-4605-96ba-5e3889a6c425/workflows/scripts/research-claude-dynamic-workflows-wf_c7a66bf4-7c6.js",
+  "result": {
+    "synthesis": "出处: https://code.claude.com/docs/en/workflows\n\n# Claude Code Dynamic Workflows（Workflow 工具）\n\nDynamic Workflows 是 Claude Code 在 2026 年 5 月 28 日随 Opus 4.8 一起推出的「研",
+    "angleSummaries": [
+      {
+        "angle": "Official Anthropic documentation for the Claude Code \"Workflow\" tool / \"Dynamic Workflows\" feature: what it is, the script API (agent/parallel/pipeline/phase/log/meta/schema), worktree isolation, resume/journaling, concurrency caps, and how it differs from subagents.",
+        "found": true,
+        "summary": "Official docs DO exist and are substantial. Canonical page: code.claude.com/docs/en/workflows (\"Orchestrate subagents at scale with dynamic workflows\"), backed by the official launch blog (claude.com/blog/introducing-dynamic-workflows-in-claude-code) and the official comparison page code.claude.com/docs/en/agents. VERIFIED FROM OFFICIAL DOCS: (1) A dynamic workflow is a JavaScript script that orchestrates subagents at scale; Claude writes the script for the task and a runtime executes it in the background while the session stays responsive. Research preview, requires Claude Code v2.1.154+, available on all paid plans + Anthropic API + Bedrock + Vertex AI + Microsoft Foundry; on Pro enable via /config \"Dynamic workflows\" row. (2) Concurrency caps are OFFICIAL and exact: \"Up to 16 concurrent agents, fewer on machines with limited CPU cores\" and \"1,000 agents total per run.\" (3) Difference from subagents/skills is documented in a full table: with subagents/skills Claude is the orchestrator (turn-by-turn, results land in Claude's context); a workflow moves the plan into code so the script holds the loop/branching/intermediate results in SCRIPT VARIABLES and Claude's context holds only the final answer. Scale: \"Dozens to hundreds of agents per run\" vs \"a few delegated tasks per turn.\" (4) RESUME/JOURNALING is official: \"The runtime tracks each agent's result as the run progresses, which is what makes a run resumable within the same session.\" On resume, completed agents return cached results; the rest run live. Only within the same session; exiting Claude Code restarts fresh. (5) PHASES are official (progress view shows each phase with agent counts, token totals, elapsed time). (6) Workflow runtime constraints are explicit: no mid-run user input, no direct filesystem/shell access from the workflow itself (agents do the I/O, the script coordinates); runs in an isolated environment separate from the conversation. (7) Bundled workflow: /deep-research (votes on each claim, returns cited report). Trigger a one-off by including the word \"workflow\" in a prompt; or set /effort ultracode (xhigh effort + automatic workflow orchestration). Manage via /workflows; save runs as /<name> in .claude/workflows/ or ~/.claude/workflows/. Disable via /config, \"disableWorkflows\": true, or CLAUDE_CODE_DISABLE_WORKFLOWS=1. Spawned subagents always run in acceptEdits mode and inherit the user's tool allowlist. (8) WORKTREE ISOLATION: official agents.md says subagents (which workflows orchestrate) \"can each get one too\" — worktrees give each session/subagent a separate git checkout. NOT FOUND IN OFFICIAL DOCS — the exact SCRIPT API SIGNATURES. The /workflows page never shows the script source. The specific primitives — agent(prompt,{schema,label,phase,model,agentType}), parallel(thunks) (\"takes thunks not promises\", failed thunks resolve to null), pipeline(items,...stages) (no barrier; stage callback (prevResult, originalItem, index)), phase(title), log(msg), injected globals args/budget/workflow(), the \"meta must be a pure literal first statement\" rule, and the determinism constraints (Date.now()/Math.random() throw to enable journaling) — come ONLY from a third-party reverse-engineering blog (alexop.dev), NOT from Anthropic. Treat those signatures as community-documented, not officially specified. Schema-validated structured output is strongly implied officially (deep-research \"votes on each claim,\" cited report) but the agent()/schema signature itself is only on alexop.dev. Real-world example (official blog): Jarred Sumner ported Bun from Zig to Rust — 99.8% of the existing test suite passing, ~750,000 lines of Rust, eleven days first-commit-to-merge, hundreds of agents in parallel. Launched alongside Opus 4.8 (~2026-05-28). Note: I could not inspect the bundled workflow source on disk — this machine has no standard @anthropic-ai/claude-code npm install (custom deskclaw setup), so I could not cross-check the script API against shipped code."
+      },
+      {
+        "angle": "Release / announcement of Claude Code \"Dynamic Workflows\" — ship date, version, and what the changelog/blog said",
+        "found": true,
+        "summary": "VERIFIED. Claude Code \"Dynamic Workflows\" was announced on May 28, 2026, the same day Anthropic shipped Claude Opus 4.8. It first appeared in Claude Code v2.1.154 (changelog dated May 28, 2026). It shipped as a research preview: Claude writes a JavaScript orchestration script that a background runtime executes, spawning dozens to hundreds of parallel subagents (hard cap 1,000 agents per run; up to 16 concurrent) with adversarial cross-checking before results return. Invoke via the word \"workflow\" in a prompt, /effort ultracode, or the bundled /deep-research command; view runs with /workflows. Availability: Claude Code CLI, Desktop, and VS Code/IDE extensions, plus Claude API, Amazon Bedrock, Google Vertex AI, and Microsoft Foundry. The blog states Max/Team/Enterprise (Enterprise admin-enabled, off by default); the official docs say all paid plans including Pro (on Pro, enable via /config). Headline example: Jarred Sumner used it to port Bun from Zig to Rust — ~750,000 lines of Rust, 99.8% of the existing test suite passing, 11 days from first commit to merge. Anthropic warns it consumes substantially more tokens than a typical session. Earlier changelog entries show the feature was in internal/incremental development before the public preview: v2.1.141 (May 13, 2026) added a \"Workflow keyword trigger\" setting and backspace-to-dismiss, v2.1.142 fixed a workflow task-panel bug, and v2.1.152 (May 27, 2026) simplified the Workflow tool's inline progress display — but v2.1.154 is the version that publicly \"introduced dynamic workflows.\" Note: dates/versions are real per current 2026 sources; this is not training-data recall."
+      },
+      {
+        "angle": "Technical details of how Claude Code Dynamic Workflows actually work (JS script model, pipeline/parallel, phase/log, StructuredOutput schema, opts, budget, workflow nesting, resume/journaling, concurrency caps, orchestration patterns)",
+        "found": true,
+        "summary": "Dynamic workflows (research preview, shipped with Opus 4.8 on 2026-05-28, require Claude Code v2.1.154+) are JavaScript (NOT TypeScript) scripts Claude writes and a background runtime executes in an isolated environment, so intermediate results live in script variables instead of Claude's context window. The script structure exports a `meta` object then uses top-level `await` with a small set of runtime-provided primitives.\n\nCORE API (verified verbatim from the bundled /deep-research workflow source and the alexop.dev deep-dive):\n- `agent(prompt, opts?)` — spawns ONE subagent. Prompt is the first positional string; opts is the second object. Without opts it returns the agent's final text; with a `schema` it returns validated JSON.\n- `opts` fields: `label` (display name in progress UI), `phase` (groups the agent in the progress display), `model` (override the session model for this stage), `isolation: \"worktree\"` (gives the agent its own git worktree so parallel agents can write files without conflicting), `agentType` (use a custom subagent type), `schema` (JSON Schema for forced structured output), and `budget` (token budget).\n- `parallel(thunks)` — runs tasks concurrently and IS A BARRIER: it waits for every thunk before returning. It takes an array of zero-arg THUNKS (`() => agent(...)`), not bare promises. A thunk that throws resolves to `null` rather than rejecting the whole call, so you must `.filter(Boolean)` the results. You can pass hundreds of thunks but only ~16 run at once.\n- `pipeline(items, ...stages)` — runs each item through all stages independently with NO BARRIER between stages (streaming/no-barrier pipelining). Each stage callback receives `(prevResult, originalItem, index)`. Guidance: default to `pipeline()`; only reach for a `parallel()` barrier when a stage needs the whole prior result set at once (e.g. dedupe/rank across all sources).\n- `workflow(nameOrRef, args?)` — invokes another saved workflow (or `{ scriptPath }`) inline. Nesting is ONE LEVEL DEEP: a `workflow()` call inside a child throws.\n- `phase(title)` and `log(msg)` — progress helpers; `phase()` starts a named group shown in `/workflows`, `log()` emits narrator lines.\n- `budget` — token budget object exposing `budget.total`.\n\nSTRUCTURED OUTPUT: schema enforcement reuses the Agent SDK mechanism — define a JSON Schema (or generate it from Zod via `z.toJSONSchema()` / Pydantic via `.model_json_schema()`), pass it as `outputFormat: { type: \"json_schema\", schema }` (TS) / `output_format` (Py); the SDK validates and RE-PROMPTS on mismatch. Success arrives in `structured_output`; exhausting retries yields subtype `error_max_structured_output_retries`. In workflow scripts the schema is passed via `opts.schema` to `agent()`.\n\nRESUME / JOURNALING: The runtime JOURNALS every `agent()` call. If you pause/stop a run you can resume it (resume from `/workflows` with `p`, or `resumeFromRunId`) — already-completed agents return CACHED results and the rest run live. This caching is exactly why non-determinism is banned: `Date.now()`, `Math.random()`, and an argless `new Date()` all THROW inside a workflow (they'd invalidate the journal/cache). Pass timestamps via `args`; get variety from prompt/label indexing instead. Resume is SESSION-SCOPED — exiting Claude Code while a workflow runs makes the next session start it fresh.\n\nCAPS (official docs): up to 16 concurrent agents (fewer on low-core machines), 1,000 agents total per run (prevents runaway loops). The runtime has no direct filesystem/shell access — only agents read/write/run commands; the script just coordinates. Subagents always run in acceptEdits mode regardless of session permission mode.\n\nORCHESTRATION PATTERNS (the generalizable shape is fan out → reduce → synthesize): (1) Adversarial verify — for each finding spawn N independent skeptics prompted to refute it, kill it unless a majority survive; (2) Loop-until-dry — for unknown-size discovery, keep spawning finders until K consecutive rounds surface nothing new, deduping against everything seen; (3) Judge panel — generate N attempts from different angles, score with parallel judges, synthesize from the winner while grafting the best of runners-up; (4) Multi-modal sweep / perspective-diverse verify — give each verifier a DISTINCT lens (correctness, security, performance, does-it-reproduce) rather than N identical ones. /deep-research is the one bundled workflow (constants observed: VOTES_PER_CLAIM=3, REFUTATIONS_REQUIRED=2, MAX_FETCH=15, MAX_VERIFY_CLAIMS=25). Ultracode (`/effort ultracode`) = xhigh reasoning + automatic workflow orchestration.\n\nSOURCE QUALITY: Official = code.claude.com/docs (workflows + agent-sdk/structured-outputs) and anthropic.com. Third-party but high-quality/code-level = alexop.dev (full API + constraints), azukiazusa.dev (verbatim /deep-research source), ray-amjad GitHub workflow-creator skill (confirms resumeFromRunId, budget.total, the 4 patterns incl. multi-modal sweep). The Anthropic blog/TechCrunch/Opus-4.8 announcements confirm the concept and dates but contain NO API-level detail."
+      },
+      {
+        "angle": "Community coverage, tutorials, blog posts, and real examples of Claude Code Dynamic Workflows",
+        "found": true,
+        "summary": "Coverage is real but THIN and very fresh: the native \"dynamic workflows\" feature shipped 2026-05-28 (2 days ago) with Opus 4.8, so most community material is 0-2 days old and skews toward news recaps + early hands-on accounts rather than mature tutorials. Best practitioner signal is a 162-point Hacker News thread (126 comments) full of concrete gotchas. The companion \"Ask HN\" thread is a dud (1 point, no real discussion). Reddit r/ClaudeAI surfaced nothing substantive in searches; YouTube hits (\"Complete Claude Code Workflow,\" July 2025) predate the feature and cover general CC workflows, not the new tool. IMPORTANT DISTINCTION: many GitHub \"Claude Code workflow / multi-agent\" repos (catlog22/Claude-Code-Workflow v7.3.14, aws-samples/sample-claude-code-agent-team, ruvnet/ruflo 56k stars, wshobson/agents, zhsama/claude-sub-agent) are COMMUNITY orchestration frameworks built on subagents/Task tool, NOT the new native dynamic-workflows feature — they're adjacent prior art. The one repo directly about the native feature is ray-amjad/claude-code-workflow-creator (a skill for authoring the JS orchestration scripts, ~67 stars, calls the tool \"unreleased/undocumented\"). Genuinely on-feature community pieces: agentpedia.codes step-by-step guide, Ken Huang's Substack (dynamic workflows vs subagents vs agent teams), azukiazusa.dev hands-on (ran /deep-research + a custom Oxlint migration), and alirezarezvani Medium (paywalled). CONCRETE USE CASES documented: Bun Zig-to-Rust port (Jarred Sumner: 750k lines Rust, 99.8% tests passing, 11 days, hundreds of agents + 2 reviewers per file — Anthropic's flagship example); codebase-wide bug hunts; security/auth hardening audits with independent verification per finding; large migrations/framework swaps/API deprecations; profiler-guided optimization; /deep-research fan-out (5 angles -> parallel search -> fetch top 15 -> 3-vote adversarial verify -> synthesize cited report); code-review fan-out across bugs/security/tests; ESLint+Prettier -> Oxlint+Oxfmt monorepo migration. PRACTITIONER TIPS: two-stage pattern (read-only find pass, then approved apply pass); save reusable workflows to .claude/workflows; trigger via the word \"workflow\" in a prompt or /effort ultracode; monitor with /workflows; inspect raw script with Ctrl+G before confirming. GOTCHAS (consistent across HN + hands-on): token burn is the #1 complaint (Anthropic itself warns it consumes \"substantially more\"; multiple users hit rate limits before /deep-research finished); workflows over-spawn 2-3x more agents than needed; cannot pause/resume or inject corrections mid-run; \"workflow\" keyword collides with existing codebase usage; subagents hit \"Prompt too long\"; human review still mandatory. Limits: 1,000 subagents/run cap, 16 concurrent, requires CC v2.1.154+, paid plans only (Max/Team/Enterprise + API/Bedrock/Vertex/Foundry), research preview."
+      },
+      {
+        "angle": "How Claude Code Dynamic Workflows compare to and relate to adjacent features (single subagents/Task tool, /loop, scheduled tasks/cron, Claude Agent SDK, and external orchestration frameworks like LangGraph/CrewAI), plus when to use a workflow vs a single subagent and the opt-in/triggering + cost model.",
+        "found": true,
+        "summary": "Dynamic Workflows (launched May 28, 2026 with Opus 4.8, in research preview, requires Claude Code v2.1.154+) are a JavaScript orchestration script that Claude writes and a runtime executes in the background. The defining distinction from the other primitives is WHO HOLDS THE PLAN. Per the official docs comparison table: a SUBAGENT is \"a worker Claude spawns\" where Claude decides what runs next turn-by-turn and intermediate results live in Claude's context window (scale: a few delegated tasks per turn); a SKILL is \"instructions Claude follows\" (also context-bound, same scale); a WORKFLOW is \"a script the runtime executes\" where the SCRIPT decides what runs next, intermediate results live in script variables (NOT Claude's context), and scale is \"dozens to hundreds of agents per run.\" So \"a workflow moves the plan into code\" — Claude's context holds only the final answer. WHEN TO USE WHICH (official): subagents for one or two isolated investigations / 2-3 step plans Claude can hold in its head; skills when the know-how should be reusable; workflows when the orchestration itself should be repeatable AND the task needs more agents than one conversation can coordinate (codebase-wide bug sweep, 500-file migration, cross-checked research, drafting a hard plan from several angles). Workflows also add a quality dimension subagents lack: independent agents can adversarially review each other's findings before reporting. A workflow is OVERKILL for small bounded tasks; if you already know the exact workflow and want cost-predictable execution, a custom subagent is more efficient. TRIGGERING / OPT-IN model is threefold: (1) put the word \"workflow\" anywhere in your prompt (CLI highlights it; alt+w to ignore a false trigger) for a one-off; (2) /effort ultracode = xhigh reasoning + automatic workflow orchestration for EVERY substantive task in the session (one request can become several workflows: understand, change, verify; resets per session; drop back with /effort high); (3) run a bundled (/deep-research) or saved (/<name>) workflow command. Save a successful run as a command by pressing 's' in /workflows (to .claude/workflows/ project or ~/.claude/workflows/ personal). LIMITS: up to 16 concurrent agents (fewer on low-CPU machines), 1,000 agents total per run (prevents runaway loops); no mid-run user input; no direct filesystem/shell from the script itself (only the agents touch files/shell); resumable within the same session (cached results) but starts fresh if you exit Claude Code. COST: a single run can use meaningfully more tokens than doing the same task in conversation; runs count toward plan usage/rate limits; every agent uses the session's model unless the script routes a stage to a smaller one (check /model before a large run; ask Claude to route cheap stages to a smaller model). Disable via /config toggle, disableWorkflows:true, or CLAUDE_CODE_DISABLE_WORKFLOWS=1. vs CLAUDE AGENT SDK: Claude Code is built ON the same harness (\"the SDK is the same harness that powers Claude Code, packaged as a library\") — the difference is who DRIVES: Claude Code = human-driven, Agent SDK = application-driven/programmatic (PreToolUse/PostToolUse/Stop hooks fire unconditionally, sessionId persistence). Workflows actually run INSIDE both surfaces (CLI, Desktop, IDE, claude -p, and the Agent SDK); in claude -p / SDK / bypass-permissions mode there is no interactive approval prompt — the run starts immediately. So workflows are orthogonal to the SDK, not an alternative. vs /loop, SCHEDULED TASKS, CRON: these are about WHEN/HOW OFTEN something runs (time/interval/event-driven recurrence), whereas a workflow is about HOW a single large task is decomposed across many agents in one run. /loop = in-session recurring/self-paced execution (cron-backed, tasks expire after 3 days). Scheduled tasks (/schedule) = time-based recurrence on Anthropic-managed cloud infra (survive machine off) or Desktop tasks (need local files/MCP). System cron + claude -p = legacy. They are complementary axes, not substitutes (you could schedule a workflow). vs LANGGRAPH/CREWAI: these are PRODUCTION/RUNTIME application frameworks; Claude Code (incl. its workflows) is a DEVELOPMENT-time tool. LangGraph = stateful directed-graph orchestration (nodes/edges, cycles, TypedDict/Pydantic shared state, conditional routing, human-in-the-loop checkpoints, resumable) that governs how a SHIPPED agent behaves at runtime; CrewAI = fastest path to a role-based multi-agent system. They are complementary, not competing: use Claude Code to write/debug your LangGraph or CrewAI app, then deploy that app to run in production. Choose LangGraph when you need 3+ stages with conditional routing, durable cross-session state, or hard human-approval checkpoints — things a Claude Code workflow (which has no mid-run user input and is only session-resumable) does not provide."
+      }
+    ],
+    "totalFindings": 67
+  },
+  "agentCount": 6,
+  "logs": [
+    "Fanning out 5 web-research agents on distinct angles of Claude Code Dynamic Workflows…",
+    "Collected 67 sourced findings across 5/5 angles."
+  ],
+  "durationMs": 360818,
+  "summary": "Research Claude Code latest Dynamic Workflows feature via parallel web search",
+  "workflowName": "research-claude-dynamic-workflows",
+  "status": "completed",
+  "startTime": 1780098811914,
+  "phases": [
+    {
+      "title": "Search",
+      "detail": "parallel web research from 5 distinct angles"
+    },
+    {
+      "title": "Synthesize",
+      "detail": "combine findings into a cited Chinese summary"
+    }
+  ],
+  "defaultModel": "claude-opus-4-8[1m]",
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Search"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Synthesize"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "search:official-docs",
+      "phaseIndex": 1,
+      "phaseTitle": "Search",
+      "agentId": "a051031200e460b8c",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1780098811941,
+      "queuedAt": 1780098811920,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Official Anthropic documentation for the Claude Code \"Workf…",
+      "promptPreview": "Today is 2026-05-30. Research the OFFICIAL Anthropic documentation for the Claude Code \"Workflow\" tool / \"Dynamic Workflows\" feature.\nUse We",
+      "lastProgressAt": 1780099096013,
+      "tokens": 54817,
+      "toolCalls": 14,
+      "durationMs": 284071,
+      "resultPreview": "{\"angle\":\"Official Anthropic documentation for the Claude Code \\\"Workflow\\\" tool / \\\"Dynamic Workflows\\\" feature: what it is, the script API"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "search:release-notes",
+      "phaseIndex": 1,
+      "phaseTitle": "Search",
+      "agentId": "a20b6fdbd07b776fe",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1780098811943,
+      "queuedAt": 1780098811920,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Release / announcement of Claude Code \"Dynamic Workflows\" —…",
+      "promptPreview": "Today is 2026-05-30. Find the RELEASE / ANNOUNCEMENT of Claude Code \"Dynamic Workflows\" — when it shipped, which version, and what the chang",
+      "lastProgressAt": 1780098888844,
+      "tokens": 41368,
+      "toolCalls": 12,
+      "durationMs": 76901,
+      "resultPreview": "{\"angle\":\"Release / announcement of Claude Code \\\"Dynamic Workflows\\\" — ship date, version, and what the changelog/blog said\",\"found_anythin"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "search:how-it-works",
+      "phaseIndex": 1,
+      "phaseTitle": "Search",
+      "agentId": "a7ff6165babd86fcb",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1780098811944,
+      "queuedAt": 1780098811920,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Technical details of how Claude Code Dynamic Workflows actu…",
+      "promptPreview": "Today is 2026-05-30. Research the TECHNICAL DETAILS of how Claude Code Dynamic Workflows actually work.\nFocus on: the JavaScript script mode",
+      "lastProgressAt": 1780098999269,
+      "tokens": 61437,
+      "toolCalls": 21,
+      "durationMs": 187325,
+      "resultPreview": "{\"angle\":\"Technical details of how Claude Code Dynamic Workflows actually work (JS script model, pipeline/parallel, phase/log, StructuredOut"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "search:community-examples",
+      "phaseIndex": 1,
+      "phaseTitle": "Search",
+      "agentId": "a7b9aab68850da134",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1780098811945,
+      "queuedAt": 1780098811920,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Community coverage, tutorials, blog posts, and real example…",
+      "promptPreview": "Today is 2026-05-30. Find COMMUNITY coverage, tutorials, blog posts, and real examples of Claude Code Dynamic Workflows.\nUse WebSearch + Web",
+      "lastProgressAt": 1780099002062,
+      "tokens": 53794,
+      "toolCalls": 24,
+      "durationMs": 190117,
+      "resultPreview": "{\"angle\":\"Community coverage, tutorials, blog posts, and real examples of Claude Code Dynamic Workflows\",\"found_anything\":true,\"summary\":\"Co"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 5,
+      "label": "search:comparison",
+      "phaseIndex": 1,
+      "phaseTitle": "Search",
+      "agentId": "a3965cacd9bfb997e",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1780098811946,
+      "queuedAt": 1780098811920,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "How Claude Code Dynamic Workflows compare to and relate to …",
+      "promptPreview": "Today is 2026-05-30. Research how Claude Code Dynamic Workflows COMPARE to and RELATE to adjacent features.\nSpecifically: vs spawning indivi",
+      "lastProgressAt": 1780098955637,
+      "tokens": 49836,
+      "toolCalls": 14,
+      "durationMs": 143691,
+      "resultPreview": "{\"angle\":\"How Claude Code Dynamic Workflows compare to and relate to adjacent features (single subagents/Task tool, /loop, scheduled tasks/c"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 6,
+      "label": "synthesize",
+      "phaseIndex": 2,
+      "phaseTitle": "Synthesize",
+      "agentId": "a0499a3fc70a5c7a0",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1780099096016,
+      "queuedAt": 1780099096014,
+      "attempt": 1,
+      "promptPreview": "Today is 2026-05-30. You are synthesizing parallel web research into a clear, accurate answer for a Chinese-speaking developer who asked: \"帮",
+      "lastProgressAt": 1780099172726,
+      "tokens": 46969,
+      "toolCalls": 0,
+      "durationMs": 76710,
+      "resultPreview": "出处: https://code.claude.com/docs/en/workflows\n\n# Claude Code Dynamic Workflows（Workflow 工具）\n\nDynamic Workflows 是 Claude Code 在 2026 年 5 月 28",
+      "lastToolSummary": ""
+    }
+  ],
+  "totalTokens": 308221,
+  "totalToolCalls": 85
+}

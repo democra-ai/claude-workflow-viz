@@ -1,0 +1,59 @@
+{
+  "name": "claude-workflow-viz",
+  "version": "0.1.0",
+  "description": "Visualize Claude Code dynamic workflows from your terminal — live progress, a DAG, a gantt timeline, and a self-contained interactive HTML report.",
+  "type": "module",
+  "bin": {
+    "wfviz": "dist/src/cli.js"
+  },
+  "exports": {
+    ".": "./dist/src/index.js"
+  },
+  "types": "./dist/src/index.d.ts",
+  "files": [
+    "dist/src",
+    "README.md",
+    "LICENSE",
+    "examples"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "demo": "node dist/src/cli.js list"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "anthropic",
+    "workflow",
+    "dynamic-workflows",
+    "visualization",
+    "cli",
+    "dag",
+    "gantt",
+    "subagents",
+    "orchestration",
+    "observability",
+    "tui"
+  ],
+  "license": "MIT",
+  "author": "democra.ai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/democra-ai/claude-workflow-viz.git"
+  },
+  "bugs": {
+    "url": "https://github.com/democra-ai/claude-workflow-viz/issues"
+  },
+  "homepage": "https://github.com/democra-ai/claude-workflow-viz#readme",
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}
