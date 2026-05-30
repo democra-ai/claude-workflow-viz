@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="440" viewBox="0 0 1280 440" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" role="img" aria-label="claude-workflow-viz — visualize Claude Code dynamic workflows">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="440" viewBox="0 0 1280 440" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" role="img" aria-label="claude-workflow-viz — visualize Claude Code dynamic workflows: prompt to script, fan out to five parallel agents, a barrier, then synthesize and return">
+  <title>claude-workflow-viz</title>
+  <desc>Animated diagram of a Claude Code dynamic workflow: prompt → script.js → 5 parallel agents → barrier → synthesize → return, with a live concurrency curve.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#0c1117"/>
@@ -8,109 +10,149 @@
       <stop offset="0" stop-color="#2dd4bf"/>
       <stop offset="1" stop-color="#22d3ee"/>
     </linearGradient>
-    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="3.2" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="4"/>
     </filter>
   </defs>
 
+  <!-- backdrop -->
   <rect width="1280" height="440" fill="url(#bg)"/>
-  <rect x="0.5" y="0.5" width="1279" height="439" fill="none" stroke="#1f2a36"/>
-
-  <!-- subtle grid -->
-  <g stroke="#121a23" stroke-width="1">
-    <line x1="0" y1="110" x2="1280" y2="110"/>
-    <line x1="0" y1="330" x2="1280" y2="330"/>
+  <rect x="0.5" y="0.5" width="1279" height="439" fill="none" stroke="#22303d"/>
+  <g stroke="#141d27" stroke-width="1">
+    <line x1="0" y1="112" x2="1280" y2="112"/>
+    <line x1="0" y1="356" x2="1280" y2="356"/>
   </g>
 
   <!-- wordmark -->
-  <text x="64" y="92" fill="#e7edf3" font-size="40" font-weight="700" letter-spacing="0.5">claude-workflow-viz</text>
-  <text x="66" y="128" fill="#7c8895" font-size="17">Visualize Claude Code dynamic workflows — DAG · gantt · live concurrency · interactive report</text>
+  <text x="64" y="92" fill="#eef3f8" font-size="40" font-weight="700" letter-spacing="0.5">claude-workflow-viz</text>
+  <text x="66" y="127" fill="#9aa6b2" font-size="18">Visualize Claude Code dynamic workflows — DAG · gantt · live concurrency · interactive report</text>
 
-  <!-- pipeline diagram: prompt -> script -> fan-out(5) -> barrier -> reduce -> result -->
-  <g transform="translate(64,196)">
+  <g transform="translate(64,200)">
+    <!-- base wires (bright slate, thick) -->
+    <path fill="none" stroke="#46586b" stroke-width="2.5" d="
+      M92 56 L128 56
+      M232 56 C300 56 300 15 372 15
+      M232 56 C300 56 300 46 372 46
+      M232 56 C300 56 300 77 372 77
+      M232 56 C300 56 300 108 372 108
+      M232 56 C300 56 300 139 372 139
+      M524 15 C585 15 585 56 632 56
+      M492 46 C585 46 585 56 632 56
+      M524 77 C585 77 585 56 632 56
+      M512 108 C585 108 585 56 632 56
+      M504 139 C585 139 585 56 632 56
+      M632 56 L690 56
+      M810 56 L866 56"/>
+    <!-- flowing energy overlay (animated dashes, same geometry) -->
+    <path fill="none" stroke="url(#teal)" stroke-width="2.4" stroke-linecap="round" opacity="0.95"
+      stroke-dasharray="7 17" d="
+      M92 56 L128 56
+      M232 56 C300 56 300 15 372 15
+      M232 56 C300 56 300 46 372 46
+      M232 56 C300 56 300 77 372 77
+      M232 56 C300 56 300 108 372 108
+      M232 56 C300 56 300 139 372 139
+      M524 15 C585 15 585 56 632 56
+      M492 46 C585 46 585 56 632 56
+      M524 77 C585 77 585 56 632 56
+      M512 108 C585 108 585 56 632 56
+      M504 139 C585 139 585 56 632 56
+      M632 56 L690 56
+      M810 56 L866 56">
+      <animate attributeName="stroke-dashoffset" from="0" to="-24" dur="0.9s" repeatCount="indefinite"/>
+    </path>
+
     <!-- prompt -->
-    <rect x="0" y="36" width="92" height="40" rx="8" fill="#0f151c" stroke="#1f2a36"/>
-    <text x="46" y="61" fill="#7c8895" font-size="13" text-anchor="middle">prompt</text>
+    <rect x="0" y="36" width="92" height="40" rx="8" fill="#0f151c" stroke="#46586b"/>
+    <text x="46" y="61" fill="#9aa6b2" font-size="13" text-anchor="middle">prompt</text>
 
-    <!-- script -->
+    <!-- script.js -->
     <rect x="128" y="36" width="104" height="40" rx="8" fill="#0f151c" stroke="#2dd4bf"/>
     <text x="180" y="61" fill="#2dd4bf" font-size="13" text-anchor="middle">script.js</text>
 
-    <!-- connectors prompt->script -->
-    <line x1="92" y1="56" x2="128" y2="56" stroke="#2b3a49" stroke-width="2"/>
-
-    <!-- fan-out edges script -> 5 agents -->
-    <g stroke="#2b3a49" stroke-width="2" fill="none">
-      <path d="M232 56 C 300 56, 300 16, 372 16"/>
-      <path d="M232 56 C 300 56, 300 46, 372 46"/>
-      <path d="M232 56 C 300 56, 300 76, 372 76"/>
-      <path d="M232 56 C 300 56, 300 106, 372 106"/>
-      <path d="M232 56 C 300 56, 300 136, 372 136"/>
-    </g>
-
-    <!-- 5 parallel agents (lane colors match the app) -->
-    <g>
-      <rect x="372" y="2"   width="150" height="26" rx="6" fill="#15212e" stroke="#5aa9ff"/>
-      <rect x="372" y="2"   width="150" height="26" rx="6" fill="#5aa9ff" opacity="0.16"/>
-      <text x="384" y="20" fill="#9fc6ff" font-size="12">search:official-docs</text>
-
-      <rect x="372" y="33"  width="120" height="26" rx="6" fill="#15212e" stroke="#f5b454"/>
-      <rect x="372" y="33"  width="120" height="26" rx="6" fill="#f5b454" opacity="0.16"/>
-      <text x="384" y="51" fill="#f5cd86" font-size="12">search:release</text>
-
-      <rect x="372" y="64"  width="150" height="26" rx="6" fill="#15212e" stroke="#34d399"/>
-      <rect x="372" y="64"  width="150" height="26" rx="6" fill="#34d399" opacity="0.16"/>
-      <text x="384" y="82" fill="#83e6bf" font-size="12">search:how-it-works</text>
-
-      <rect x="372" y="95"  width="138" height="26" rx="6" fill="#15212e" stroke="#c084fc"/>
-      <rect x="372" y="95"  width="138" height="26" rx="6" fill="#c084fc" opacity="0.16"/>
-      <text x="384" y="113" fill="#d4adff" font-size="12">search:community</text>
-
-      <rect x="372" y="126" width="132" height="26" rx="6" fill="#15212e" stroke="#fb7185"/>
-      <rect x="372" y="126" width="132" height="26" rx="6" fill="#fb7185" opacity="0.16"/>
-      <text x="384" y="144" fill="#ffa7b3" font-size="12">search:compare</text>
-    </g>
-
-    <!-- edges agents -> barrier -->
-    <g stroke="#2b3a49" stroke-width="2" fill="none">
-      <path d="M522 15 C 580 15, 580 56, 632 56"/>
-      <path d="M492 46 C 580 46, 580 56, 632 56"/>
-      <path d="M522 77 C 580 77, 580 56, 632 56"/>
-      <path d="M510 108 C 580 108, 580 56, 632 56"/>
-      <path d="M504 139 C 580 139, 580 56, 632 56"/>
+    <!-- 5 parallel agents -->
+    <g font-size="12">
+      <g>
+        <rect x="372" y="2" width="152" height="26" rx="6" fill="#15212e" stroke="#5aa9ff"/>
+        <rect x="372" y="2" width="152" height="26" rx="6" fill="#5aa9ff" opacity="0.18"/>
+        <text x="384" y="20" fill="#bcd8ff">search:official-docs</text>
+      </g>
+      <g>
+        <rect x="372" y="33" width="120" height="26" rx="6" fill="#15212e" stroke="#f5b454"/>
+        <rect x="372" y="33" width="120" height="26" rx="6" fill="#f5b454" opacity="0.18"/>
+        <text x="384" y="51" fill="#f8d79a">search:release</text>
+      </g>
+      <g>
+        <rect x="372" y="64" width="152" height="26" rx="6" fill="#15212e" stroke="#34d399"/>
+        <rect x="372" y="64" width="152" height="26" rx="6" fill="#34d399" opacity="0.18"/>
+        <text x="384" y="82" fill="#9ff0cf">search:how-it-works</text>
+      </g>
+      <g>
+        <rect x="372" y="95" width="140" height="26" rx="6" fill="#15212e" stroke="#c084fc"/>
+        <rect x="372" y="95" width="140" height="26" rx="6" fill="#c084fc" opacity="0.18"/>
+        <text x="384" y="113" fill="#ddc2ff">search:community</text>
+      </g>
+      <g>
+        <rect x="372" y="126" width="132" height="26" rx="6" fill="#15212e" stroke="#fb7185"/>
+        <rect x="372" y="126" width="132" height="26" rx="6" fill="#fb7185" opacity="0.18"/>
+        <text x="384" y="144" fill="#ffbcc5">search:compare</text>
+      </g>
     </g>
 
     <!-- barrier -->
-    <g>
-      <line x1="632" y1="6" x2="632" y2="106" stroke="#f5b454" stroke-width="2" stroke-dasharray="5 4"/>
-      <text x="640" y="120" fill="#f5b454" font-size="12">barrier · parallel() waits for all</text>
-    </g>
+    <line x1="632" y1="4" x2="632" y2="108" stroke="#f5b454" stroke-width="2.4" stroke-dasharray="6 4">
+      <animate attributeName="opacity" values="0.45;1;0.45" dur="1.6s" repeatCount="indefinite"/>
+    </line>
+    <text x="600" y="128" fill="#f5b454" font-size="12">barrier · parallel() waits for all 5</text>
 
-    <!-- reduce -->
-    <line x1="632" y1="56" x2="690" y2="56" stroke="#2b3a49" stroke-width="2"/>
+    <!-- synthesize -->
     <rect x="690" y="36" width="120" height="40" rx="8" fill="#0f151c" stroke="#5aa9ff"/>
-    <text x="750" y="61" fill="#9fc6ff" font-size="13" text-anchor="middle">synthesize</text>
+    <text x="750" y="61" fill="#bcd8ff" font-size="13" text-anchor="middle">synthesize</text>
 
-    <!-- result -->
-    <line x1="810" y1="56" x2="866" y2="56" stroke="#2b3a49" stroke-width="2"/>
-    <g filter="url(#glow)">
-      <rect x="866" y="34" width="118" height="44" rx="9" fill="#0b2b27" stroke="url(#teal)" stroke-width="1.5"/>
+    <!-- result (glowing) -->
+    <rect x="866" y="34" width="118" height="44" rx="9" fill="#0b2b27" stroke="#2dd4bf" filter="url(#soft)">
+      <animate attributeName="opacity" values="0.35;0.9;0.35" dur="2s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="866" y="34" width="118" height="44" rx="9" fill="#0b2b27" stroke="url(#teal)" stroke-width="1.6"/>
+    <text x="925" y="61" fill="#5eead4" font-size="13" font-weight="700" text-anchor="middle">return ✓</text>
+
+    <!-- live concurrency mini-chart -->
+    <g transform="translate(1028,2)">
+      <text x="0" y="6" fill="#6b7785" font-size="11">concurrency</text>
+      <path d="M0 80 L0 42 L24 42 L24 28 L60 28 L60 42 L86 42 L86 80 Z" fill="#2dd4bf" opacity="0.13"/>
+      <path d="M0 42 L24 42 L24 28 L60 28 L60 42 L86 42" fill="none" stroke="url(#teal)" stroke-width="2"
+        stroke-dasharray="180" stroke-dashoffset="180" opacity="0.85">
+        <animate attributeName="stroke-dashoffset" values="180;0" dur="2.6s" repeatCount="indefinite"/>
+      </path>
+      <text x="0" y="98" fill="#9aa6b2" font-size="12">peak ×5 / 16</text>
     </g>
-    <text x="925" y="61" fill="#5eead4" font-size="13" text-anchor="middle" font-weight="700">return ✓</text>
 
-    <!-- concurrency mini-curve -->
-    <g transform="translate(1024,8)">
-      <text x="0" y="6" fill="#525e6b" font-size="11">concurrency</text>
-      <path d="M0 78 L0 40 L24 40 L24 26 L60 26 L60 40 L84 40 L84 78 Z" fill="#2dd4bf" opacity="0.14"/>
-      <path d="M0 40 L24 40 L24 26 L60 26 L60 40 L84 40" fill="none" stroke="#2dd4bf" stroke-width="1.6" opacity="0.6"/>
-      <text x="0" y="96" fill="#7c8895" font-size="12">peak ×5 / 16</text>
+    <!-- traveling particles -->
+    <g>
+      <circle r="3.2" fill="#5eead4">
+        <animateMotion dur="2.3s" repeatCount="indefinite" path="M92 56 L866 56"/>
+        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.88;1" dur="2.3s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="3.2" fill="#5eead4">
+        <animateMotion dur="2.3s" begin="1.15s" repeatCount="indefinite" path="M92 56 L866 56"/>
+        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.88;1" dur="2.3s" begin="1.15s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="2.6" fill="#9fc6ff">
+        <animateMotion dur="1.25s" repeatCount="indefinite" path="M232 56 C300 56 300 15 372 15"/>
+        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.8;1" dur="1.25s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="2.6" fill="#fb7185">
+        <animateMotion dur="1.25s" begin="0.5s" repeatCount="indefinite" path="M232 56 C300 56 300 139 372 139"/>
+        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.8;1" dur="1.25s" begin="0.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="2.6" fill="#83e6bf">
+        <animateMotion dur="1.25s" begin="0.25s" repeatCount="indefinite" path="M524 77 C585 77 585 56 632 56"/>
+        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.8;1" dur="1.25s" begin="0.25s" repeatCount="indefinite"/>
+      </circle>
     </g>
   </g>
 
-  <!-- footer stats line -->
-  <g transform="translate(64,388)">
-    <text x="0" y="16" fill="#525e6b" font-size="13">npx github:democra-ai/claude-workflow-viz</text>
-    <text x="1152" y="16" fill="#525e6b" font-size="13" text-anchor="end">zero runtime deps · MIT</text>
-  </g>
+  <!-- footer -->
+  <text x="64" y="402" fill="#6b7785" font-size="13">npx github:democra-ai/claude-workflow-viz</text>
+  <text x="1216" y="402" fill="#6b7785" font-size="13" text-anchor="end">zero runtime deps · MIT</text>
 </svg>

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/hero.png" alt="claude-workflow-viz — visualize Claude Code dynamic workflows" width="100%" />
+  <img src="./assets/hero.svg" alt="claude-workflow-viz — visualize Claude Code dynamic workflows" width="100%" />
 </p>
 
 <h1 align="center">claude-workflow-viz</h1>
