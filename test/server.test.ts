@@ -20,10 +20,15 @@ function makeProjects(): string {
 test("activeRunData returns the most-recently-written run as a payload", () => {
   const tmp = makeProjects();
   try {
-    // touch the running fixture so it is the most recently modified.
-    const runningPath = path.join(tmp, "-Users-x-demo", "session-1", "workflows", "wf_running01.json");
-    const now = new Date();
-    fs.utimesSync(runningPath, now, now);
+    // Set explicit, well-separated mtimes on BOTH files so "most recently
+    // written" is unambiguous regardless of filesystem mtime granularity.
+    const wfDir = path.join(tmp, "-Users-x-demo", "session-1", "workflows");
+    const researchPath = path.join(wfDir, "wf_c7a66bf4-7c6.json");
+    const runningPath = path.join(wfDir, "wf_running01.json");
+    const old = new Date(Date.now() - 60_000);
+    const recent = new Date();
+    fs.utimesSync(researchPath, old, old);
+    fs.utimesSync(runningPath, recent, recent);
     const payload = activeRunData({ projectsDir: tmp }) as {
       ok: boolean;
       isRunning: boolean;

@@ -57,7 +57,7 @@
   "homepage": "https://github.com/democra-ai/claude-workflow-viz#readme",
   "devDependencies": {
     "@types/node": "^22.10.0",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.25.0",
     "typescript": "^5.7.0"
   }
 }
