@@ -43,3 +43,11 @@ export {
 export { renderRun, renderRunLine, type TerminalOptions } from "./render-terminal.js";
 export { renderHtml, buildHtmlData, type HtmlOptions } from "./render-html.js";
 export { watchRun, renderFrame, type WatchOptions } from "./watch.js";
+export { liveDashboardHtml } from "./render-live.js";
+export {
+  startServer,
+  openBrowser,
+  activeRunData,
+  type ServerOptions,
+  type RunningServer,
+} from "./server.js";

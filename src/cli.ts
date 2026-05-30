@@ -18,10 +18,11 @@ import { discoverRuns, encodeProjectSlug, resolveRunRef } from "./discover.js";
 import { parseRunFile } from "./parse.js";
 import { renderHtml } from "./render-html.js";
 import { renderRun, renderRunLine } from "./render-terminal.js";
+import { startServer } from "./server.js";
 import { watchRun } from "./watch.js";
 
 const VERSION = "0.1.0";
-const VALUE_FLAGS = new Set(["out", "o", "limit", "interval", "width", "cap", "project"]);
+const VALUE_FLAGS = new Set(["out", "o", "limit", "interval", "width", "cap", "project", "port", "host"]);
 
 interface ParsedArgs {
   positionals: string[];
@@ -83,6 +84,7 @@ COMMANDS
   list                 List discovered workflow runs (newest first)
   show   [ref]         Render a run in the terminal               (default: latest)
   watch  [ref]         Live terminal view; refreshes until the run finishes
+  live                 Start a live web dashboard (auto-opens in your browser)
   export [ref]         Write a self-contained interactive HTML report
   help                 Show this help
 
@@ -96,6 +98,9 @@ OPTIONS
   --json               Machine-readable output (list)
   -o, --out <file>     Output path (export)
   --open               Open the HTML report after writing (export)
+  --port <n>           Port for the live dashboard (default: 7682) (live)
+  --host <h>           Host to bind the live dashboard (default: 127.0.0.1)
+  --no-open            Do not auto-open the browser (live)
   --cap <n>            Concurrency cap reference to display (default: 16)
   --interval <ms>      Poll interval for watch (default: 1000)
   --width <n>          Terminal width override (show, watch)
@@ -107,6 +112,7 @@ EXAMPLES
   wfviz list
   wfviz show latest
   wfviz watch                       # follow the most recent run live
+  wfviz live                        # open a live web dashboard; agents light up as they run
   wfviz export latest -o run.html --open
 
 Runs are read from ~/.claude/projects (override with CLAUDE_CONFIG_DIR).
@@ -216,6 +222,39 @@ async function cmdWatch(args: ParsedArgs): Promise<number> {
   return 0;
 }
 
+async function cmdLive(args: ParsedArgs): Promise<number> {
+  const port = Number(args.flags["port"]);
+  const open = !args.flags["no-open"];
+  const slug = args.flags["here"]
+    ? encodeProjectSlug(process.cwd())
+    : typeof args.flags["project"] === "string"
+      ? (args.flags["project"] as string)
+      : undefined;
+  const host = typeof args.flags["host"] === "string" ? (args.flags["host"] as string) : undefined;
+  const srv = await startServer({
+    port: Number.isFinite(port) ? port : undefined,
+    open,
+    projectSlug: slug,
+    host,
+  });
+  const p = makePainter(resolveColor(args.flags));
+  process.stdout.write(
+    p.fg("brightGreen", "● ") +
+      "live dashboard at " +
+      p.bold(srv.url) +
+      p.dim("   (Ctrl-C to stop)") +
+      "\n",
+  );
+  // Stay alive until interrupted.
+  return await new Promise<number>((resolve) => {
+    const stop = () => {
+      srv.close().then(() => resolve(0));
+    };
+    process.on("SIGINT", stop);
+    process.on("SIGTERM", stop);
+  });
+}
+
 export async function main(argv: string[]): Promise<number> {
   const args = parseArgs(argv);
   if (args.flags["version"]) {
@@ -240,6 +279,9 @@ export async function main(argv: string[]): Promise<number> {
     case "watch":
     case "follow":
       return cmdWatch(args);
+    case "live":
+    case "serve":
+      return cmdLive(args);
     default:
       process.stderr.write(`Unknown command: ${cmd}\n\n` + HELP);
       return 2;

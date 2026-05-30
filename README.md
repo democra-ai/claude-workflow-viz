@@ -40,7 +40,22 @@ It's a zero-runtime-dependency CLI. Point it at any run and it reconstructs the 
 
 ---
 
-## Install
+## Auto-launch as a Claude Code plugin
+
+The best way to use it: install the plugin and a live visualization **opens by itself the moment a workflow starts** — no command to remember.
+
+```
+/plugin marketplace add democra-ai/claude-workflow-viz
+/plugin install claude-workflow-viz@democra-ai
+```
+
+That's it. The plugin registers a `PreToolUse` hook on the `Workflow` tool; when Claude Code begins any dynamic workflow, the hook starts a tiny local server and opens a live dashboard in your browser that **follows the run** — agents light up as they queue → run → finish, with the gantt, the `parallel()` barriers, and live concurrency all updating in real time. Re-runs reuse the same server and tab.
+
+- Hooks load automatically on enable — **no `settings.json` editing**.
+- **Nothing builds on install** — the plugin ships a prebuilt, dependency-free `bin/wfviz.mjs` (you just need Node ≥ 18 on PATH).
+- Change the port with `WFVIZ_PORT` (default `7682`). Manage or remove it any time via `/plugin`.
+
+## Install (CLI)
 
 No npm publish required — run it straight from GitHub:
 
@@ -74,7 +89,8 @@ wfviz <command> [ref] [options]
 | --- | --- |
 | `wfviz list` | List discovered runs, newest first |
 | `wfviz show [ref]` | Render a run in the terminal |
-| `wfviz watch [ref]` | Live view — redraws until the run finishes |
+| `wfviz watch [ref]` | Live terminal view — redraws until the run finishes |
+| `wfviz live` | Start a live **web** dashboard (auto-opens; this is what the plugin launches) |
 | `wfviz export [ref] -o report.html` | Write a self-contained interactive HTML report |
 
 ### List your runs

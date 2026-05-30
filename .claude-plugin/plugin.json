@@ -1,0 +1,11 @@
+{
+  "name": "claude-workflow-viz",
+  "version": "0.1.0",
+  "description": "Auto-opens a live agent visualization the moment a Claude Code dynamic workflow starts.",
+  "author": { "name": "democra.ai" },
+  "homepage": "https://github.com/democra-ai/claude-workflow-viz",
+  "repository": "https://github.com/democra-ai/claude-workflow-viz",
+  "license": "MIT",
+  "keywords": ["claude-code", "workflow", "dynamic-workflows", "visualization", "hooks", "dag", "gantt"],
+  "hooks": "./hooks/hooks.json"
+}

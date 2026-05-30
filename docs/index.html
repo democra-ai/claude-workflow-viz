@@ -102,7 +102,12 @@ footer{border-top:1px solid var(--line);margin-top:48px;padding-top:22px;color:v
   </div>
 
   <h2>Get started</h2>
-  <div class="install"><span class="d"># list your recent workflow runs</span>
+  <div class="install"><span class="d"># best: install the plugin — a live view opens automatically when a workflow starts</span>
+<span class="t">/plugin</span> marketplace add democra-ai/claude-workflow-viz
+<span class="t">/plugin</span> install claude-workflow-viz@democra-ai
+
+<span class="d"># or drive it from the CLI</span>
+<span class="d"># list your recent workflow runs</span>
 <span class="t">npx</span> github:democra-ai/claude-workflow-viz list
 
 <span class="d"># render the latest run, or export an interactive report</span>

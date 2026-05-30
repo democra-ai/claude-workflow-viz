@@ -1,0 +1,11 @@
+{
+  "name": "democra-ai",
+  "owner": { "name": "democra.ai" },
+  "plugins": [
+    {
+      "name": "claude-workflow-viz",
+      "source": "./",
+      "description": "Auto-opens a live agent visualization the moment a Claude Code dynamic workflow starts — a fan-out → barrier → reduce DAG, a gantt, and live concurrency."
+    }
+  ]
+}
