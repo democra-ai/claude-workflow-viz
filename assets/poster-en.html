@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0a0e13;--panel:#0f151c;--panel2:#131b24;--line:#22303d;
+    --ink:#eef3f8;--mut:#9aa6b2;--dim:#5b6775;
+    --teal:#2dd4bf;--cyan:#22d3ee;--amber:#f5b454;
+    --p1:#5aa9ff;--p2:#f5b454;--p3:#34d399;--p4:#c084fc;--p5:#fb7185;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    --sans:"PingFang SC","Hiragino Sans GB","Segoe UI",sans-serif;
+  }
+  html,body{width:1080px;height:1440px;background:var(--bg);font-family:var(--sans);color:var(--ink);overflow:hidden}
+  .card{position:relative;width:1080px;height:1440px;
+    background:
+      radial-gradient(1200px 600px at 78% -8%, rgba(45,212,191,.16), transparent 60%),
+      radial-gradient(900px 500px at -10% 108%, rgba(90,169,255,.12), transparent 55%),
+      linear-gradient(160deg,#0c1117,#070a0e);
+    padding:64px 64px 56px}
+  .frame{position:absolute;inset:20px;border:1px solid #1c2935;border-radius:28px;pointer-events:none}
+
+  .kicker{display:flex;align-items:center;gap:13px;font-family:var(--mono);font-size:22px;color:var(--teal);letter-spacing:1px}
+  .kicker .dot{width:10px;height:10px;border-radius:50%;background:var(--teal);box-shadow:0 0 16px var(--teal)}
+  .kicker .by{color:var(--dim)}
+
+  h1{margin-top:26px;font-size:80px;line-height:1.07;font-weight:800;letter-spacing:-1px}
+  h1 .hl{color:var(--teal)}
+  .sub{margin-top:22px;font-size:29px;line-height:1.5;color:var(--mut);font-weight:500}
+  .sub b{color:var(--ink);font-weight:700}
+
+  /* visual: pipeline */
+  .stage{margin-top:34px;background:linear-gradient(180deg,#0f151c,#0c1219);
+    border:1px solid var(--line);border-radius:22px;padding:44px 34px 28px;position:relative;overflow:hidden}
+  .stage .tag{position:absolute;top:14px;left:34px;font-family:var(--mono);font-size:16px;color:var(--dim)}
+  .row{display:flex;align-items:center;gap:8px;margin-top:14px}
+  .chip{font-family:var(--mono);font-size:18px;border:1px solid var(--line);border-radius:11px;padding:11px 13px;background:#0f151c;white-space:nowrap}
+  .chip.teal{border-color:var(--teal);color:var(--teal)}
+  .chip.res{border-color:var(--teal);color:#5eead4;background:#0b2b27;box-shadow:0 0 30px -8px var(--teal);font-weight:700}
+  .arrow{flex:0 0 auto;width:18px;height:2px;background:#46586b;position:relative}
+  .arrow:after{content:"";position:absolute;right:-1px;top:-4px;border:5px solid transparent;border-left-color:#46586b}
+  .fan{flex:1;display:flex;flex-direction:column;gap:8px;margin:0 2px}
+  .agent{font-family:var(--mono);font-size:16px;border-radius:9px;padding:8px 11px;border:1px solid;display:flex;align-items:center;gap:9px;white-space:nowrap}
+  .agent .d{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+  .a1{border-color:var(--p1)} .a1 .d{background:var(--p1)} .a1 b{color:#bcd8ff}
+  .a2{border-color:var(--p2)} .a2 .d{background:var(--p2)} .a2 b{color:#f8d79a}
+  .a3{border-color:var(--p3)} .a3 .d{background:var(--p3)} .a3 b{color:#9ff0cf}
+  .a4{border-color:var(--p4)} .a4 .d{background:var(--p4)} .a4 b{color:#ddc2ff}
+  .a5{border-color:var(--p5)} .a5 .d{background:var(--p5)} .a5 b{color:#ffbcc5}
+  .agent b{font-weight:600}
+  .barrier{flex:0 0 auto;width:0;border-left:3px dashed var(--amber);height:208px;margin:0 4px;position:relative}
+  .barrier span{position:absolute;left:50%;top:-26px;transform:translateX(-50%);white-space:nowrap;color:var(--amber);font-family:var(--mono);font-size:16px}
+  .barnote{margin-top:14px;text-align:center;color:var(--amber);font-family:var(--mono);font-size:18px}
+
+  /* mini gantt */
+  .gantt{margin-top:16px;display:flex;flex-direction:column;gap:6px}
+  .grow{display:flex;align-items:center;gap:12px}
+  .glab{width:196px;font-family:var(--mono);font-size:15px;color:var(--mut);text-align:right;white-space:nowrap}
+  .track{flex:1;height:14px;border-radius:4px;background:#0e1620;position:relative}
+  .track .b{position:absolute;top:0;height:14px;border-radius:4px}
+
+  /* feature pills */
+  .feats{margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .feat{display:flex;align-items:center;gap:15px;background:#0f151c;border:1px solid var(--line);border-radius:15px;padding:17px 20px}
+  .feat .ic{font-size:28px}
+  .feat .t{font-size:23px;font-weight:700}
+  .feat .s{font-size:16px;color:var(--mut);margin-top:2px}
+
+  .footer{position:absolute;left:64px;right:64px;bottom:56px;display:flex;align-items:flex-end;justify-content:space-between}
+  .footer .cmd{font-family:var(--mono);font-size:21px;color:var(--ink)}
+  .footer .cmd .p{color:var(--teal)}
+  .footer .cmd .small{display:block;color:var(--dim);font-size:17px;margin-top:7px}
+  .footer .badge{text-align:right;font-family:var(--mono);font-size:18px;color:var(--dim);line-height:1.6}
+  .footer .badge b{color:var(--teal)}
+</style></head>
+<body>
+<div class="card">
+  <div class="frame"></div>
+
+  <div class="kicker"><span class="dot"></span> CLAUDE CODE · 动态工作流 <span class="by">· by @democra.ai</span></div>
+
+  <h1>几十个 AI Agent<br>同时跑，<span class="hl">终于看得见了</span></h1>
+  <div class="sub">Claude Code 跑 workflow 时，<b>一启动就自动弹出</b>实时可视化：<br>谁在并行、卡在哪个 barrier、烧了多少 token——一目了然。</div>
+
+  <div class="stage">
+    <div class="tag">fan-out → barrier → reduce</div>
+    <div class="row">
+      <div class="chip">prompt</div>
+      <div class="arrow"></div>
+      <div class="chip teal">script.js</div>
+      <div class="arrow"></div>
+      <div class="fan">
+        <div class="agent a1"><span class="d"></span><b>search:official-docs</b></div>
+        <div class="agent a2"><span class="d"></span><b>search:release</b></div>
+        <div class="agent a3"><span class="d"></span><b>search:how-it-works</b></div>
+        <div class="agent a4"><span class="d"></span><b>search:community</b></div>
+        <div class="agent a5"><span class="d"></span><b>search:compare</b></div>
+      </div>
+      <div class="barrier"><span>║ barrier</span></div>
+      <div class="arrow"></div>
+      <div class="chip teal">synthesize</div>
+      <div class="arrow"></div>
+      <div class="chip res">return ✓</div>
+    </div>
+    <div class="barnote">barrier · parallel() 等齐全部 5 个 agent 才继续</div>
+
+    <div class="gantt">
+      <div class="grow"><div class="glab">search:official-docs</div><div class="track"><div class="b" style="left:0;width:78%;background:var(--p1)"></div></div></div>
+      <div class="grow"><div class="glab">search:release</div><div class="track"><div class="b" style="left:0;width:21%;background:var(--p2)"></div></div></div>
+      <div class="grow"><div class="glab">search:how-it-works</div><div class="track"><div class="b" style="left:0;width:52%;background:var(--p3)"></div></div></div>
+      <div class="grow"><div class="glab">search:community</div><div class="track"><div class="b" style="left:0;width:54%;background:var(--p4)"></div></div></div>
+      <div class="grow"><div class="glab">search:compare</div><div class="track"><div class="b" style="left:0;width:40%;background:var(--p5)"></div></div></div>
+      <div class="grow"><div class="glab">synthesize</div><div class="track"><div class="b" style="left:80%;width:20%;background:var(--amber)"></div></div></div>
+    </div>
+  </div>
+
+  <div class="feats">
+    <div class="feat"><div class="ic">⚡️</div><div><div class="t">开跑即弹出</div><div class="s">装成 Claude Code 插件，零操作</div></div></div>
+    <div class="feat"><div class="ic">📊</div><div><div class="t">甘特 + 并发曲线</div><div class="s">真实时间轴还原并行结构</div></div></div>
+    <div class="feat"><div class="ic">🧩</div><div><div class="t">可分享报告</div><div class="s">单文件 HTML，离线可开</div></div></div>
+    <div class="feat"><div class="ic">🪶</div><div><div class="t">零运行依赖</div><div class="s">纯本地读取 · 开源 MIT</div></div></div>
+  </div>
+
+  <div class="footer">
+    <div class="cmd"><span class="p">/plugin</span> install claude-workflow-viz<span class="small">github.com/democra-ai/claude-workflow-viz</span></div>
+    <div class="badge"><b>开源免费</b> · 即装即用<br>评论区有传送门 👇</div>
+  </div>
+</div>
+</body></html>
