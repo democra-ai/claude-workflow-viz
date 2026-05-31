@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh"><head><meta charset="utf-8">
+<html lang="en"><head><meta charset="utf-8">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
@@ -8,7 +8,7 @@
     --teal:#2dd4bf;--cyan:#22d3ee;--amber:#f5b454;
     --p1:#5aa9ff;--p2:#f5b454;--p3:#34d399;--p4:#c084fc;--p5:#fb7185;
     --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
-    --sans:"PingFang SC","Hiragino Sans GB","Segoe UI",sans-serif;
+    --sans:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
   }
   html,body{width:1080px;height:1440px;background:var(--bg);font-family:var(--sans);color:var(--ink);overflow:hidden}
   .card{position:relative;width:1080px;height:1440px;
@@ -76,10 +76,10 @@
 <div class="card">
   <div class="frame"></div>
 
-  <div class="kicker"><span class="dot"></span> CLAUDE CODE · 动态工作流 <span class="by">· by @democra.ai</span></div>
+  <div class="kicker"><span class="dot"></span> CLAUDE CODE · DYNAMIC WORKFLOWS <span class="by">· by @democra.ai</span></div>
 
-  <h1>几十个 AI Agent<br>同时跑，<span class="hl">终于看得见了</span></h1>
-  <div class="sub">Claude Code 跑 workflow 时，<b>一启动就自动弹出</b>实时可视化：<br>谁在并行、卡在哪个 barrier、烧了多少 token——一目了然。</div>
+  <h1>Dozens of AI agents,<br>now <span class="hl">finally visible</span></h1>
+  <div class="sub">When Claude Code runs a workflow, a live view <b>opens by itself</b> —<br>see who's running in parallel, where the barrier is, how many tokens it burned.</div>
 
   <div class="stage">
     <div class="tag">fan-out → barrier → reduce</div>
@@ -101,7 +101,7 @@
       <div class="arrow"></div>
       <div class="chip res">return ✓</div>
     </div>
-    <div class="barnote">barrier · parallel() 等齐全部 5 个 agent 才继续</div>
+    <div class="barnote">barrier · parallel() waits for all 5 agents before continuing</div>
 
     <div class="gantt">
       <div class="grow"><div class="glab">search:official-docs</div><div class="track"><div class="b" style="left:0;width:78%;background:var(--p1)"></div></div></div>
@@ -114,15 +114,15 @@
   </div>
 
   <div class="feats">
-    <div class="feat"><div class="ic">⚡️</div><div><div class="t">开跑即弹出</div><div class="s">装成 Claude Code 插件，零操作</div></div></div>
-    <div class="feat"><div class="ic">📊</div><div><div class="t">甘特 + 并发曲线</div><div class="s">真实时间轴还原并行结构</div></div></div>
-    <div class="feat"><div class="ic">🧩</div><div><div class="t">可分享报告</div><div class="s">单文件 HTML，离线可开</div></div></div>
-    <div class="feat"><div class="ic">🪶</div><div><div class="t">零运行依赖</div><div class="s">纯本地读取 · 开源 MIT</div></div></div>
+    <div class="feat"><div class="ic">⚡️</div><div><div class="t">Auto-opens on start</div><div class="s">Install as a Claude Code plugin · zero setup</div></div></div>
+    <div class="feat"><div class="ic">📊</div><div><div class="t">Gantt + concurrency</div><div class="s">Real timeline rebuilds the parallel structure</div></div></div>
+    <div class="feat"><div class="ic">🧩</div><div><div class="t">Shareable report</div><div class="s">Single-file HTML · opens offline</div></div></div>
+    <div class="feat"><div class="ic">🪶</div><div><div class="t">Zero dependencies</div><div class="s">Reads local files · open source MIT</div></div></div>
   </div>
 
   <div class="footer">
     <div class="cmd"><span class="p">/plugin</span> install claude-workflow-viz<span class="small">github.com/democra-ai/claude-workflow-viz</span></div>
-    <div class="badge"><b>开源免费</b> · 即装即用<br>评论区有传送门 👇</div>
+    <div class="badge"><b>Open source · MIT</b><br>install in two lines ↑</div>
   </div>
 </div>
 </body></html>
