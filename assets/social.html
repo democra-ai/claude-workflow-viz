@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0a0e13;--line:#22303d;--ink:#eef3f8;--mut:#9aa6b2;--dim:#5b6775;
+    --teal:#2dd4bf;--amber:#f5b454;
+    --p1:#5aa9ff;--p2:#f5b454;--p3:#34d399;--p4:#c084fc;--p5:#fb7185;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    --sans:"Segoe UI","PingFang SC",sans-serif;
+  }
+  html,body{width:1280px;height:640px;overflow:hidden;font-family:var(--sans);color:var(--ink)}
+  .card{position:relative;width:1280px;height:640px;
+    background:
+      radial-gradient(1200px 620px at 80% -12%, rgba(45,212,191,.18), transparent 60%),
+      radial-gradient(900px 520px at -8% 112%, rgba(90,169,255,.12), transparent 55%),
+      linear-gradient(160deg,#0c1117,#070a0e);
+    padding:62px 70px}
+  .frame{position:absolute;inset:18px;border:1px solid #1c2935;border-radius:26px;pointer-events:none}
+
+  .kick{display:flex;align-items:center;gap:13px;font-family:var(--mono);font-size:21px;color:var(--teal);letter-spacing:1.5px}
+  .kick .dot{width:11px;height:11px;border-radius:50%;background:var(--teal);box-shadow:0 0 18px var(--teal)}
+  .kick .by{color:var(--dim);letter-spacing:.5px}
+
+  h1{margin-top:22px;font-size:74px;line-height:1.04;font-weight:800;letter-spacing:-1.5px}
+  h1 .m{font-family:var(--mono);font-weight:700}
+  .sub{margin-top:18px;font-size:27px;color:var(--mut);font-weight:500;max-width:1040px}
+  .sub b{color:var(--ink);font-weight:700}
+
+  .pipe{position:absolute;left:70px;right:70px;bottom:118px;display:flex;align-items:center;gap:10px}
+  .chip{font-family:var(--mono);font-size:18px;border:1px solid var(--line);border-radius:11px;padding:11px 15px;background:#0f151c;white-space:nowrap}
+  .chip.teal{border-color:var(--teal);color:var(--teal)}
+  .chip.res{border-color:var(--teal);color:#5eead4;background:#0b2b27;box-shadow:0 0 30px -8px var(--teal);font-weight:700}
+  .arrow{flex:0 0 auto;width:26px;height:2px;background:#46586b;position:relative}
+  .arrow:after{content:"";position:absolute;right:-1px;top:-4px;border:5px solid transparent;border-left-color:#46586b}
+  .fan{flex:1;display:flex;flex-direction:column;gap:7px;margin:0 4px}
+  .ag{font-family:var(--mono);font-size:15px;border-radius:8px;padding:6px 11px;border:1px solid;display:flex;align-items:center;gap:8px;white-space:nowrap}
+  .ag .d{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+  .a1{border-color:var(--p1)}.a1 .d{background:var(--p1)}.a1 b{color:#bcd8ff}
+  .a2{border-color:var(--p2)}.a2 .d{background:var(--p2)}.a2 b{color:#f8d79a}
+  .a3{border-color:var(--p3)}.a3 .d{background:var(--p3)}.a3 b{color:#9ff0cf}
+  .a4{border-color:var(--p4)}.a4 .d{background:var(--p4)}.a4 b{color:#ddc2ff}
+  .ag b{font-weight:600}
+  .bar{flex:0 0 auto;width:0;border-left:3px dashed var(--amber);height:150px;margin:0 6px;position:relative}
+  .bar span{position:absolute;left:50%;top:-24px;transform:translateX(-50%);white-space:nowrap;color:var(--amber);font-family:var(--mono);font-size:15px}
+
+  .foot{position:absolute;left:70px;right:70px;bottom:50px;display:flex;align-items:center;justify-content:space-between}
+  .foot .cmd{font-family:var(--mono);font-size:21px;color:var(--ink)}
+  .foot .cmd .p{color:var(--teal)}
+  .foot .badge{font-family:var(--mono);font-size:18px;color:var(--dim)}
+  .foot .badge b{color:var(--teal)}
+</style></head>
+<body>
+<div class="card">
+  <div class="frame"></div>
+  <div class="kick"><span class="dot"></span> CLAUDE CODE · DYNAMIC WORKFLOWS <span class="by">· by democra.ai</span></div>
+  <h1><span class="m">claude-workflow-viz</span></h1>
+  <div class="sub">See dozens of AI agents run at once — a live dashboard that <b>auto-opens when a workflow starts</b>, plus a gantt, the <b>parallel() barriers</b>, and a shareable interactive report.</div>
+
+  <div class="pipe">
+    <div class="chip">prompt</div>
+    <div class="arrow"></div>
+    <div class="chip teal">script.js</div>
+    <div class="arrow"></div>
+    <div class="fan">
+      <div class="ag a1"><span class="d"></span><b>search:official-docs</b></div>
+      <div class="ag a2"><span class="d"></span><b>search:release</b></div>
+      <div class="ag a3"><span class="d"></span><b>search:how-it-works</b></div>
+      <div class="ag a4"><span class="d"></span><b>search:community</b></div>
+    </div>
+    <div class="bar"><span>║ barrier</span></div>
+    <div class="arrow"></div>
+    <div class="chip teal">synthesize</div>
+    <div class="arrow"></div>
+    <div class="chip res">return ✓</div>
+  </div>
+
+  <div class="foot">
+    <div class="cmd"><span class="p">npx</span> github:democra-ai/claude-workflow-viz</div>
+    <div class="badge"><b>open source · MIT</b> · zero runtime deps</div>
+  </div>
+</div>
+</body></html>
