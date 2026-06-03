@@ -1,6 +1,6 @@
 {
   "name": "claude-workflow-viz",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Visualize Claude Code dynamic workflows from your terminal — live progress, a DAG, a gantt timeline, and a self-contained interactive HTML report.",
   "type": "module",
   "bin": {

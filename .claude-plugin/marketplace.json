@@ -1,6 +1,7 @@
 {
   "name": "democra-ai",
   "owner": { "name": "democra.ai" },
+  "description": "Tools by democra.ai for Claude Code — starting with claude-workflow-viz, a live visualizer for dynamic workflows.",
   "plugins": [
     {
       "name": "claude-workflow-viz",

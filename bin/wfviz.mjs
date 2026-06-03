@@ -1451,7 +1451,7 @@ function watchRun(ref, opts = {}) {
 }
 
 // src/cli.ts
-var VERSION = "0.1.0";
+var VERSION = "0.1.1";
 var VALUE_FLAGS = /* @__PURE__ */ new Set(["out", "o", "limit", "interval", "width", "cap", "project", "port", "host"]);
 function parseArgs(argv) {
   const positionals = [];

@@ -21,7 +21,7 @@ import { renderRun, renderRunLine } from "./render-terminal.js";
 import { startServer } from "./server.js";
 import { watchRun } from "./watch.js";
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 const VALUE_FLAGS = new Set(["out", "o", "limit", "interval", "width", "cap", "project", "port", "host"]);
 
 interface ParsedArgs {
